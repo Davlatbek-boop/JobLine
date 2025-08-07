@@ -5,7 +5,6 @@ import { BadRequestException, ValidationPipe } from "@nestjs/common";
 import * as cookieParser from "cookie-parser";
 import { WinstonModule } from "nest-winston";
 
-
 async function start() {
   const PORT = process.env.PORT ?? 5000;
   const app = await NestFactory.create(AppModule, {
@@ -25,6 +24,7 @@ async function start() {
       const allowedOrigin = [
         "http://18.153.199.72:3003",
         "http://localhost:3004",
+        "http://localhost:3000",
         "http://localhost:8000",
       ];
       if (!origin || allowedOrigin.includes(origin)) {
