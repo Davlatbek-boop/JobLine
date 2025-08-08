@@ -1,8 +1,10 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { BadRequestException } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { BadRequestException, ValidationPipe } from "@nestjs/common";
+import * as cookieParser from "cookie-parser";
+import { WinstonModule } from "nest-winston";
+
 
 async function start() {
   const PORT = process.env.PORT ?? 5000;
@@ -21,9 +23,9 @@ async function start() {
   app.enableCors({
     origin: (origin, callback) => {
       const allowedOrigin = [
-        'http://18.153.199.72:3003',
-        'http://localhost:3004',
-        'http://localhost:8000',
+        "http://18.153.199.72:3003",
+        "http://localhost:3004",
+        "http://localhost:8000",
       ];
       if (!origin || allowedOrigin.includes(origin)) {
         callback(null, true);
