@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Seeker } from './entities/seeker.entity';
 import { CreateSeekerDto } from './dto/create-seeker.dto';
 import { UpdateSeekerDto } from './dto/update-seeker.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class SeekersService {
@@ -11,6 +12,30 @@ export class SeekersService {
     @InjectRepository(Seeker)
     private readonly seekerRepository: Repository<Seeker>,
   ) {}
+
+  async updateRefreshToken(id: number, refresh_token: string) {
+    await this.seekerRepository.update(id, { refresh_token });
+    return { message: 'Refresh token updated successfully' };
+  }
+
+  async findSeekerByEmail(email: string) {
+    const admin = await this.seekerRepository.findOne({ where: { email } });
+    return admin;
+  }
+
+  async findSeekerByRefresh(refresh_token: string) {
+      const admins = await this.seekerRepository.find();
+  
+      for (const admin of admins) {
+        const match = await bcrypt.compare(
+          refresh_token,
+          admin.refresh_token || '',
+        );
+        if (match) return admin;
+      }
+  
+      return null;
+    }
 
   async create(createSeekerDto: CreateSeekerDto): Promise<Seeker> {
     const seeker = this.seekerRepository.create(createSeekerDto);
