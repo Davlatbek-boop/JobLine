@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Category } from "../../category/entities/category.entity";
 import { Skill } from "../../skills/entities/skill.entity";
+import { Education } from "../../education/entities/education.entity";
 
 @Entity()
 export class Specialization {
@@ -44,6 +45,10 @@ export class Specialization {
 
   @OneToMany(() => Skill, (skill) => skill.specialization)
   skill: Skill[];
+
+  @OneToMany(() => Education, (education) => education.specialization, {
+    onDelete: 'CASCADE',
+  })
+  education: Education[];
 }
-{
-}
+

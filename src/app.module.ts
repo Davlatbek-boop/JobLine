@@ -7,6 +7,12 @@ import { WorkExperienceModule } from './work-experience/work-experience.module';
 import { SeekerSkillsModule } from './seeker-skills/seeker-skills.module';
 import { SeekerSocialLinkModule } from './seeker-social-link/seeker-social-link.module';
 import { SocialLinksModule } from './social-links/social-links.module';
+import { ApplicationsModule } from './applications/applications.module';
+import { CategoryModule } from './category/category.module';
+import { SkillsModule } from './skills/skills.module';
+import { SpecializationModule } from './specialization/specialization.module';
+import { VacanciesModule } from './vacancies/vacancies.module';
+import { VacancySkillsModule } from './vacancy_skills/vacancy_skills.module';
 
 @Module({
   imports: [
@@ -19,7 +25,7 @@ import { SocialLinksModule } from './social-links/social-links.module';
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DB,
       autoLoadEntities: true,
-      entities: [],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
     SeekersModule,
@@ -28,6 +34,12 @@ import { SocialLinksModule } from './social-links/social-links.module';
     SeekerSkillsModule,
     SeekerSocialLinkModule,
     SocialLinksModule,
+    ApplicationsModule,
+    CategoryModule,
+    SkillsModule,
+    SpecializationModule,
+    VacanciesModule,
+    VacancySkillsModule,
   ],
 })
 export class AppModule {}

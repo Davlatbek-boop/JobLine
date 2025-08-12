@@ -8,6 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Seeker } from '../../seekers/entities/seeker.entity';
+import { Specialization } from '../../specialization/entities/specialization.entity';
 
 export enum EducationLevel {
   HIGH_SCHOOL = 'high_school',
@@ -59,7 +60,7 @@ export class Education {
   @JoinColumn({ name: 'seeker_id' })
   seeker: Seeker;
 
-  @ManyToOne(() => Specialization, specialization => specialization.id, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Specialization, specialization => specialization.education, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'specialization_id' })
   specialization: Specialization;
 }

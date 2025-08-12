@@ -206,7 +206,7 @@ export class Vacancy {
   @Column({
     type: 'enum',
     enum: ['draft', 'active', 'paused', 'closed', 'expired'],
-    default: 'draft',
+    default: 'active',
     nullable: true,
   })
   status?: string;

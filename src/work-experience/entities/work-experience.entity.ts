@@ -8,6 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Seeker } from '../../seekers/entities/seeker.entity';
+import { Specialization } from '../../specialization/entities/specialization.entity';
 
 export enum EmploymentType {
   FULL_TIME = 'full_time',

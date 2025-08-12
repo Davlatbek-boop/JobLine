@@ -37,10 +37,13 @@ export class Skill {
   @UpdateDateColumn({ type: "timestamp" })
   updated_at: Date;
 
+  
+  @CreateDateColumn({ type: "timestamp" })
+  created_at: Date;
+
+  
   @ManyToOne(() => Specialization, (specialization) => specialization.skill, {
     onDelete: "CASCADE",
   })
   specialization: Specialization;
-}
-{
 }
