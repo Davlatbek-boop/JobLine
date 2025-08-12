@@ -32,7 +32,7 @@ export class ApplicationsService {
   }
 
   findOne(id: number) {
-    return this.applicationRepo.findOneBy({ id });
+    return this.applicationRepo.findOne({ where: { id },  relations: ['vacancy'], });
   }
 
   async update(id: number, updateApplicationDto: UpdateApplicationDto) {

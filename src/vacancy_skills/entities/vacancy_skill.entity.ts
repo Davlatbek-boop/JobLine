@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Vacancy } from '../../vacancies/entities/vacancy.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Skill } from '../../skills/entities/skill.entity';
 
 @Entity('vacancy_skills')
 export class VacancySkill {
@@ -45,11 +46,11 @@ export class VacancySkill {
   @ManyToOne(() => Vacancy, (vacancy) => vacancy.vacancySkills)
   vacancy: Vacancy;
 
-  //   @ApiProperty({
-  //     type: () => Skill,
-  //     description: 'Skill info',
-  //     example: '1',
-  //   })
-  //   @ManyToOne(() => Skill, (skill) => skill.vacancySkills)
-  //   skill: Skill;
+    @ApiProperty({
+      type: () => Skill,
+      description: 'Skill info',
+      example: '1',
+    })
+    @ManyToOne(() => Skill, (skill) => skill.vacancySkills)
+    skill: Skill;
 }
