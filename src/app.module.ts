@@ -1,6 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { SeekersModule } from './seekers/seekers.module';
+import { EducationModule } from './education/education.module';
+import { WorkExperienceModule } from './work-experience/work-experience.module';
+import { SeekerSkillsModule } from './seeker-skills/seeker-skills.module';
+import { SeekerSocialLinkModule } from './seeker-social-link/seeker-social-link.module';
+import { SocialLinksModule } from './social-links/social-links.module';
 
 @Module({
   imports: [
@@ -16,6 +22,12 @@ import { TypeOrmModule } from "@nestjs/typeorm";
       entities: [],
       synchronize: true,
     }),
+    SeekersModule,
+    EducationModule,
+    WorkExperienceModule,
+    SeekerSkillsModule,
+    SeekerSocialLinkModule,
+    SocialLinksModule,
   ],
 })
 export class AppModule {}
