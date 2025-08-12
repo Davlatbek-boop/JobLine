@@ -12,7 +12,7 @@ import { SocialLinksModule } from './social-links/social-links.module';
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: "postgres",
       host: process.env.PG_HOST,
       port: Number(process.env.PG_PORT),
       username: process.env.PG_USERNAME,
