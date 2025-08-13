@@ -109,4 +109,13 @@ export class Application {
   })
   @ManyToOne(() => Vacancy, (vacancy) => vacancy.applications)
   vacancy: Vacancy;
+
+
+  // O'chirishim kerak
+  // @ApiProperty({
+  //   type: () => [VacancySkill],
+  //   description: 'Required Skill of Vacancies',
+  // })
+  // @OneToMany(() => VacancySkill, (skill) => skill.vacancy)
+  // vacancySkills: VacancySkill[];
 }

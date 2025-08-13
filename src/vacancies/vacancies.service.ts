@@ -1,15 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateVacancyDto } from './dto/create-vacancy.dto';
-import { UpdateVacancyDto } from './dto/update-vacancy.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Vacancy } from './entities/vacancy.entity';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { CreateVacancyDto } from "./dto/create-vacancy.dto";
+import { UpdateVacancyDto } from "./dto/update-vacancy.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Vacancy } from "./entities/vacancy.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class VacanciesService {
   constructor(
     @InjectRepository(Vacancy)
-    private readonly vacancyRepo: Repository<Vacancy>,
+    private readonly vacancyRepo: Repository<Vacancy>
   ) {}
 
   create(createVacancyDto: CreateVacancyDto) {
@@ -18,10 +18,10 @@ export class VacanciesService {
 
   async findAll(page: number, limit: number) {
     const [vacansies, total] = await this.vacancyRepo.findAndCount({
-      relations: ['applications'], //'hr', 'company', 'specialization'
+      relations: ["applications"], //'hr', 'company', 'specialization'
       skip: (page - 1) * limit,
       take: limit,
-      order: { id: 'ASC' },
+      order: { id: "ASC" },
     });
     return {
       success: true,
@@ -43,11 +43,17 @@ export class VacanciesService {
     }
 
     const res = await this.vacancyRepo.save(one);
-    return { ...res, message: 'Application updated successfully' };
+    return { ...res, message: "Application updated successfully" };
   }
 
   async remove(id: number) {
-    const res = await this.vacancyRepo.delete(id);
-    return { ...res, message: 'Vacancy deleted successfully' };
+    const vacancy = await this.findOne(id);
+    if (!vacancy) {
+      throw new NotFoundException(`Vacancy with ${id} id not found`);
+    }
+
+    vacancy.status = "closed";
+    await this.vacancyRepo.save(vacancy);
+    return { message: `Vacancy with ${id} id closed successfully` };
   }
 }

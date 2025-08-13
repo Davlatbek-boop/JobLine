@@ -4,10 +4,12 @@ import {
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Specialization } from "../../specialization/entities/specialization.entity";
+import { VacancySkill } from "../../vacancy_skills/entities/vacancy_skill.entity";
 
 export enum SkillType {
   TECHNICAL = "Technical",
@@ -37,10 +39,18 @@ export class Skill {
   @UpdateDateColumn({ type: "timestamp" })
   updated_at: Date;
 
+  
+  @CreateDateColumn({ type: "timestamp" })
+  created_at: Date;
+
+
   @ManyToOne(() => Specialization, (specialization) => specialization.skill, {
     onDelete: "CASCADE",
   })
   specialization: Specialization;
-}
-{
+
+  @OneToMany(() => VacancySkill, (vacancySkill) => vacancySkill.skill, {
+    onDelete: "CASCADE",
+  })
+  vacancySkills: VacancySkill[];
 }

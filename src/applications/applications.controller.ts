@@ -21,7 +21,7 @@ import { Application } from "./entities/application.entity";
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  @ApiOperation({ summary: "CREATE Vacancy" })
+  @ApiOperation({ summary: "CREATE Application" })
   @ApiResponse({
     status: 200,
     description: "Activation",
@@ -33,19 +33,20 @@ export class ApplicationsController {
   }
 
   @ApiOperation({ summary: "GET ALL Applications" })
+  @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
+  @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
   @ApiResponse({
     status: 200,
     description: "List of Applications",
     type: [Application],
   })
   @Get()
-  @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
-  @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
   findAll(@Query("page") page = 1, @Query("limit") limit = 10) {
     return this.applicationsService.findAll(Number(page), Number(limit));
   }
 
   @ApiOperation({ summary: "GET One Application By Id" })
+  @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
     status: 200,
     description: "Application",
@@ -57,6 +58,7 @@ export class ApplicationsController {
   }
 
   @ApiOperation({ summary: "UPDATE Application" })
+  @ApiParam({ name: "id", type: Number })
   @ApiResponse({
     status: 200,
     description: "Update Application",
@@ -71,6 +73,7 @@ export class ApplicationsController {
   }
 
   @ApiOperation({ summary: "DELETE Application" })
+  @ApiParam({ name: "id", type: Number })
   @ApiResponse({
     status: 200,
     description: "Delete Application",
@@ -83,15 +86,15 @@ export class ApplicationsController {
 
   // All applications for a vacancy (optional status + pagination)
   @ApiOperation({ summary: "Get all applications for a given vacancy" })
+  @ApiParam({ name: "vacancyId", type: Number })
+  @ApiQuery({ name: "status", required: false, example: "pending" })
+  @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
+  @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
   @ApiResponse({
     status: 200,
     description: "Get all Application by vacancy",
     type: [Application],
   })
-  @ApiParam({ name: "vacancyId", type: Number })
-  @ApiQuery({ name: "status", required: false, example: "pending" })
-  @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
-  @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
   @Get("by-vacancy/:vacancyId")
   getByVacancy(
     @Param("vacancyId", ParseIntPipe) vacancyId: number,
@@ -112,6 +115,11 @@ export class ApplicationsController {
   @ApiQuery({ name: "status", required: true, example: "reviewed" })
   @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
   @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
+  @ApiResponse({
+    status: 200,
+    description: "Filtered Applications",
+    type: [Application],
+  })
   @Get("filter/by-status")
   filterByStatus(
     @Query("status") status: string,
