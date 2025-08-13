@@ -18,50 +18,50 @@ import { SkillsService } from "./skills.service";
 import { CreateSkillDto } from "./dto/create-skill.dto";
 import { UpdateSkillDto } from "./dto/update-skill.dto";
 
-@ApiTags("Skills") // Swagger'da guruh nomi
+@ApiTags("Skills") // Swagger group name
 @Controller("skills")
 export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
 
   @Post()
-  @ApiOperation({ summary: "Yangi skill yaratish" })
-  @ApiResponse({ status: 201, description: "Skill muvaffaqiyatli yaratildi" })
+  @ApiOperation({ summary: "Create a new skill" })
+  @ApiResponse({ status: 201, description: "Skill successfully created" })
   @ApiBody({ type: CreateSkillDto })
   create(@Body() createSkillDto: CreateSkillDto) {
     return this.skillsService.create(createSkillDto);
   }
 
   @Get()
-  @ApiOperation({ summary: "Barcha skilllarni olish" })
-  @ApiResponse({ status: 200, description: "Skilllar ro‘yxati" })
+  @ApiOperation({ summary: "Get all skills" })
+  @ApiResponse({ status: 200, description: "List of skills" })
   findAll() {
     return this.skillsService.findAll();
   }
 
   @Get(":id")
-  @ApiOperation({ summary: "Bitta skillni olish" })
-  @ApiParam({ name: "id", type: Number, description: "Skill ID raqami" })
-  @ApiResponse({ status: 200, description: "Topilgan skill" })
-  @ApiResponse({ status: 404, description: "Skill topilmadi" })
+  @ApiOperation({ summary: "Get a single skill" })
+  @ApiParam({ name: "id", type: Number, description: "Skill ID number" })
+  @ApiResponse({ status: 200, description: "Skill found" })
+  @ApiResponse({ status: 404, description: "Skill not found" })
   findOne(@Param("id") id: string) {
     return this.skillsService.findOne(+id);
   }
 
   @Patch(":id")
-  @ApiOperation({ summary: "Skill ma'lumotini yangilash" })
-  @ApiParam({ name: "id", type: Number, description: "Skill ID raqami" })
+  @ApiOperation({ summary: "Update skill information" })
+  @ApiParam({ name: "id", type: Number, description: "Skill ID number" })
   @ApiBody({ type: UpdateSkillDto })
-  @ApiResponse({ status: 200, description: "Skill muvaffaqiyatli yangilandi" })
-  @ApiResponse({ status: 404, description: "Skill topilmadi" })
+  @ApiResponse({ status: 200, description: "Skill successfully updated" })
+  @ApiResponse({ status: 404, description: "Skill not found" })
   update(@Param("id") id: string, @Body() updateSkillDto: UpdateSkillDto) {
     return this.skillsService.update(+id, updateSkillDto);
   }
 
   @Delete(":id")
-  @ApiOperation({ summary: "Skillni o‘chirish" })
-  @ApiParam({ name: "id", type: Number, description: "Skill ID raqami" })
-  @ApiResponse({ status: 200, description: "Skill muvaffaqiyatli o‘chirildi" })
-  @ApiResponse({ status: 404, description: "Skill topilmadi" })
+  @ApiOperation({ summary: "Delete a skill" })
+  @ApiParam({ name: "id", type: Number, description: "Skill ID number" })
+  @ApiResponse({ status: 200, description: "Skill successfully deleted" })
+  @ApiResponse({ status: 404, description: "Skill not found" })
   remove(@Param("id") id: string) {
     return this.skillsService.remove(+id);
   }

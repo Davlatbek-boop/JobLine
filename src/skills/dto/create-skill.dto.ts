@@ -11,15 +11,15 @@ import { ApiProperty } from "@nestjs/swagger";
 export class CreateSkillDto {
   @ApiProperty({
     example: "JavaScript",
-    description: "Skill nomi",
+    description: "Name of the skill",
   })
   @IsNotEmpty()
   @IsString()
   name: string;
 
   @ApiProperty({
-    example: "Frontend development uchun asosiy dasturlash tili",
-    description: "Skill haqida qisqacha tavsif",
+    example: "Main programming language for frontend development",
+    description: "Short description of the skill",
     required: false,
   })
   @IsString()
@@ -27,7 +27,7 @@ export class CreateSkillDto {
 
   @ApiProperty({
     example: 3,
-    description: "Ushbu skill tegishli bo‘lgan specialization ID raqami",
+    description: "Specialization ID to which this skill belongs",
   })
   @IsNotEmpty()
   @IsNumber()
@@ -35,7 +35,7 @@ export class CreateSkillDto {
 
   @ApiProperty({
     example: SkillType.SOFT,
-    description: "Skill turi (masalan: HARD yoki SOFT)",
+    description: "Type of the skill (e.g., HARD or SOFT)",
     enum: SkillType,
   })
   @IsEnum(SkillType)
@@ -43,7 +43,7 @@ export class CreateSkillDto {
 
   @ApiProperty({
     example: true,
-    description: "Skill faol yoki yo‘qligini belgilaydi",
+    description: "Indicates whether the skill is active or not",
   })
   @IsNotEmpty()
   @IsBoolean()

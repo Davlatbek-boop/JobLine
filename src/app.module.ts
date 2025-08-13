@@ -18,6 +18,8 @@ import { VacanciesModule } from "./vacancies/vacancies.module";
 import { VacancySkillsModule } from "./vacancy_skills/vacancy_skills.module";
 import { ApplicationsModule } from "./applications/applications.module";
 import { CategoryModule } from "./category/category.module";
+import { SkillsModule } from "./skills/skills.module";
+import { SpecializationModule } from "./specialization/specialization.module";
 
 @Module({
   imports: [
@@ -50,6 +52,8 @@ import { CategoryModule } from "./category/category.module";
     AuthModule,
     HrModule,
     AdminModule,
+    SkillsModule,
+    SpecializationModule
   ],
 })
 export class AppModule {}
