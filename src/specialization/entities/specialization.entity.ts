@@ -37,9 +37,6 @@ export class Specialization {
   @Column({ nullable: true })
   active_vacancies_count: number;
 
-  @ApiProperty({ description: "Active Vacancies count", example: 1 })
-  @Column({ nullable: true }) // Yana ApiProperty o'zgarishi mumkin
-  sort_order: number;
 
   @ApiProperty({ description: "Is tis Specialization active", example: true })
   @Column({ default: true })

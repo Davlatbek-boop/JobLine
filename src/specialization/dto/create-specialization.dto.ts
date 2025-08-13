@@ -36,11 +36,6 @@ export class CreateSpecializationDto {
   @IsNumber()
   category_id: number;
 
-  @ApiProperty({ description: "Active Vacancies count", example: 1 })
-  @IsOptional()
-  @IsNumber()
-  sort_order: number; // Yana ApiProperty o'zgarishi mumkin
-
   @ApiProperty({ description: "Is tis Specialization active", example: true })
   @IsBoolean()
   is_active: boolean;
