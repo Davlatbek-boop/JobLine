@@ -7,16 +7,23 @@ import {
   Param,
   Delete,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from "@nestjs/swagger";
+
 import { SeekerSkillsService } from "./seeker-skills.service";
 import { CreateSeekerSkillDto } from "./dto/create-seeker-skill.dto";
 import { UpdateSeekerSkillDto } from "./dto/update-seeker-skill.dto";
+import { ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
+import { SeekerSkill } from "./entities/seeker-skill.entity";
 
-@ApiTags("Seeker Skills") // Swagger UI'da kategoriya nomi
 @Controller("seeker-skills")
 export class SeekerSkillsController {
   constructor(private readonly seekerSkillsService: SeekerSkillsService) {}
 
+  @ApiOperation({ summary: "CREATE SeekerSkill" })
+  @ApiResponse({
+    status: 200,
+    description: "Activation",
+    type: SeekerSkill,
+  })
   @Post()
   @ApiOperation({ summary: "Yangi seeker skill qo‘shish" })
   @ApiResponse({
@@ -27,6 +34,12 @@ export class SeekerSkillsController {
     return this.seekerSkillsService.create(createSeekerSkillDto);
   }
 
+  @ApiOperation({ summary: "GET ALL SeekerSkills" })
+  @ApiResponse({
+    status: 200,
+    description: "List of SeekerSkills",
+    type: [SeekerSkill],
+  })
   @Get()
   @ApiOperation({ summary: "Barcha seeker skill’larni olish" })
   @ApiResponse({ status: 200, description: "Seeker skill ro‘yxati" })
@@ -34,19 +47,28 @@ export class SeekerSkillsController {
     return this.seekerSkillsService.findAll();
   }
 
+
+  @ApiOperation({ summary: "GET One SeekerSkill By Id" })
+  @ApiParam({ name: "id", type: Number, example: 1 })
+  @ApiResponse({
+    status: 200,
+    description: "SeekerSkill",
+    type: SeekerSkill,
+  })
   @Get(":id")
-  @ApiOperation({ summary: "Bitta seeker skill ma’lumotini olish" })
-  @ApiParam({ name: "id", description: "Seeker skill ID raqami", example: 1 })
-  @ApiResponse({ status: 200, description: "Topilgan seeker skill" })
-  @ApiResponse({ status: 404, description: "Seeker skill topilmadi" })
   findOne(@Param("id") id: string) {
     return this.seekerSkillsService.findOne(+id);
   }
 
+
+  @ApiOperation({ summary: "UPDATE SeekerSkill" })
+  @ApiParam({ name: "id", type: Number })
+  @ApiResponse({
+    status: 200,
+    description: "Update SeekerSkill",
+    type: SeekerSkill,
+  })
   @Patch(":id")
-  @ApiOperation({ summary: "Seeker skill ma’lumotini yangilash" })
-  @ApiParam({ name: "id", description: "Seeker skill ID raqami", example: 1 })
-  @ApiResponse({ status: 200, description: "Seeker skill yangilandi" })
   update(
     @Param("id") id: string,
     @Body() updateSeekerSkillDto: UpdateSeekerSkillDto
@@ -54,13 +76,15 @@ export class SeekerSkillsController {
     return this.seekerSkillsService.update(+id, updateSeekerSkillDto);
   }
 
-  @Delete(":id")
-  @ApiOperation({ summary: "Seeker skillni o‘chirish" })
-  @ApiParam({ name: "id", description: "Seeker skill ID raqami", example: 1 })
+
+  @ApiOperation({ summary: "DELETE SeekerSkill" })
+  @ApiParam({ name: "id", type: Number })
   @ApiResponse({
     status: 200,
-    description: "Seeker skill muvaffaqiyatli o‘chirildi",
+    description: "Delete SeekerSkill",
+    type: SeekerSkill,
   })
+  @Delete(":id")
   remove(@Param("id") id: string) {
     return this.seekerSkillsService.remove(+id);
   }

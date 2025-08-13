@@ -1,37 +1,23 @@
-import { IsEnum, IsOptional, IsBoolean, IsNumber } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsOptional, IsBoolean, IsNumber } from 'class-validator';
 
 export class CreateSeekerSkillDto {
-  @ApiProperty({
-    description: 'Skillning ID raqami',
-    example: 1,
-    type: Number,
-  })
+
+  @ApiProperty({ description: "Skill ID", example: 1 })
   @IsNumber()
   skill_id: number;
 
-  @ApiProperty({
-    description: 'Seeker (ish qidiruvchi) ID raqami',
-    example: 42,
-    type: Number,
-  })
+  @ApiProperty({ description: "Job Seeker ID", example: 1 })
   @IsNumber()
   seeker_id: number;
 
-  @ApiPropertyOptional({
-    description: 'Proficiency level (boshlovchi, o‘rtacha yoki yuqori)',
-    enum: ['beginner', 'intermediate', 'advanced'],
-    example: 'intermediate',
-  })
+  @ApiProperty({ description: "Proficiency level", example: "intermediate" })
   @IsOptional()
-  @IsEnum(['beginner', 'intermediate', 'advanced'])
-  proficiency_level?: 'beginner' | 'intermediate' | 'advanced';
+  @IsEnum(["beginner", "intermediate", "advanced"])
+  proficiency_level?: "beginner" | "intermediate" | "advanced";
 
-  @ApiPropertyOptional({
-    description: 'Skill sertifikatlangan yoki yo‘qligini ko‘rsatadi',
-    example: true,
-    type: Boolean,
-  })
+
+  @ApiProperty({ description: "Has he or she certificate", example: true })
   @IsOptional()
   @IsBoolean()
   is_certified?: boolean;

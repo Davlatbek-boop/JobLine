@@ -1,112 +1,188 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, OneToMany } from 'typeorm';
-import { WorkExperience } from '../../work-experience/entities/work-experience.entity';
-import { Education } from '../../education/entities/education.entity';
-import { SeekerSkill } from '../../seeker-skills/entities/seeker-skill.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+  OneToMany,
+} from "typeorm";
+import { WorkExperience } from "../../work-experience/entities/work-experience.entity";
+import { Education } from "../../education/entities/education.entity";
+import { SeekerSkill } from "../../seeker-skills/entities/seeker-skill.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
 export enum Gender {
-  MALE = 'male',
-  FEMALE = 'female',
-  OTHER = 'other',
+  MALE = "male",
+  FEMALE = "female",
+  OTHER = "other",
 }
 
 export enum Status {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  BANNED = 'banned',
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  BANNED = "banned",
 }
 
 export enum PreferredWorkForm {
-  REMOTE = 'remote',
-  ONSITE = 'onsite',
-  HYBRID = 'hybrid',
+  REMOTE = "remote",
+  ONSITE = "onsite",
+  HYBRID = "hybrid",
 }
 
-@Entity('seekers')
-@Index(['first_name', 'last_name', 'description'])
-@Index(['city', 'country'])
-@Index(['status', 'is_active'])
+@Entity("seekers")
+@Index(["first_name", "last_name", "description"])
+@Index(["city", "country"])
+@Index(["status", "is_active"])
 export class Seeker {
+  @ApiProperty({ description: "HR unique ID" })
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({ description: "Job seeker name", example: "Olim" })
+  @Column({ type: "varchar", nullable: true })
   first_name: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({ description: "Job seeker surname", example: "Nodirov" })
+  @Column({ type: "varchar", nullable: true })
   last_name: string;
 
-  @Column({ type: 'varchar', unique: true })
+  @ApiProperty({
+    description: "Job seeker eamil",
+    example: "example@gmail.com",
+  })
+  @Column({ type: "varchar", unique: true })
   email: string;
 
-  @Column({ type: 'varchar' })
+  @ApiProperty({ description: "Password", example: "Passw0rd123!" })
+  @Column({ type: "varchar" })
   password_hash: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({
+    description: "Job seeker phone number",
+    example: "+998993330000",
+  })
+  @Column({ type: "varchar", nullable: true })
   phone_number: string;
 
-  @Column({ type: 'date', nullable: true })
+  @ApiProperty({ description: "Date of birth", example: "2000-02-03" })
+  @Column({ type: "date", nullable: true })
   birth_date: string;
 
-  @Column({ type: 'enum', enum: Gender, nullable: true })
+  @ApiProperty({ description: "Gender", example: Gender.MALE })
+  @Column({ type: "enum", enum: Gender, nullable: true })
   gender: Gender;
 
-  @Column({ type: 'text', nullable: true })
+  @ApiProperty({ description: "Address", example: "20-01-15" })
+  @Column({ type: "text", nullable: true })
   address: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({ description: "City name", example: "Tashkent" })
+  @Column({ type: "varchar", nullable: true })
   city: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({ description: "Country name", example: "Chilonzor" })
+  @Column({ type: "varchar", nullable: true })
   country: string;
 
-  @Column({ type: 'text', nullable: true })
+  @ApiProperty({ description: "Description", example: "Intelligent, sociable" })
+  @Column({ type: "text", nullable: true })
   description: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({
+    description: "Job seeker image link",
+    example: "https://example.com/image",
+  })
+  @Column({ type: "varchar", nullable: true })
   img_url: string;
 
-  @Column({ type: 'bigint', nullable: true })
+  @ApiProperty({
+    description: "Job seeker social media link unique ID",
+    example: 1,
+  })
+  @Column({ type: "bigint", nullable: true })
   social_links_id: number;
 
-  @Column({ type: 'json', nullable: true })
+  @ApiProperty({ description: "languages", example: "en, ru, uz" })
+  @Column({ type: "json", nullable: true })
   languages: any;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({ description: "Resume file", example: "Resume file" })
+  @Column({ type: "varchar", nullable: true })
   resume_file: string;
 
-  @Column({ type: 'bigint', nullable: true })
+  @ApiProperty({ description: "Expected minimum salary", example: 300 })
+  @Column({ type: "bigint", nullable: true })
   expected_salary_min: number;
 
-  @Column({ type: 'bigint', nullable: true })
+  @ApiProperty({ description: "Expected miximum salary", example: 4000 })
+  @Column({ type: "bigint", nullable: true })
   expected_salary_max: number;
 
-  @Column({ type: 'enum', enum: PreferredWorkForm, nullable: true })
+  @ApiProperty({
+    description: "Preferred work format",
+    example: PreferredWorkForm.HYBRID,
+  })
+  @Column({ type: "enum", enum: PreferredWorkForm, nullable: true })
   preferred_work_form: PreferredWorkForm;
 
-  @Column({ type: 'json', nullable: true })
+  @ApiProperty({
+    description: "Preferred location to work",
+    example: "Coffee station",
+  })
+  @Column({ type: "json", nullable: true })
   preferred_locations: any;
 
-  @Column({ type: 'enum', enum: Status, default: Status.ACTIVE })
+  @ApiProperty({
+    description: "Job seeker status",
+    example: Status.ACTIVE,
+  })
+  @Column({ type: "enum", enum: Status, default: Status.ACTIVE })
   status: Status;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({
+    description: "  Job seeker token key to use site in his/her corner",
+    example: "jcu2v48dkcbh8237",
+  })
+  @Column({ type: "varchar", nullable: true })
   refresh_token: string;
 
-  @Column({ type: 'boolean', default: true })
+  @ApiProperty({ description: "Is Job seeker at work or not ?", example: true })
+  @Column({ type: "boolean", default: true })
   is_active: boolean;
 
+  @ApiProperty({
+    description: "Job seeker added date",
+    example: "2025-02-29T10:30:00Z",
+  })
   @CreateDateColumn()
   created_at: Date;
 
+  @ApiProperty({
+    description: "Job seeker info last changed date",
+    example: "2025-05-29T10:30:00Z",
+  })
   @UpdateDateColumn()
   updated_at: Date;
 
-    @OneToMany(() => WorkExperience, workExperience => workExperience.seeker)
-    work_experiences: WorkExperience[];
+  @ApiProperty({
+    type: () => [WorkExperience],
+    description: "List of Job Seeker working experience",
+  })
+  @OneToMany(() => WorkExperience, (workExperience) => workExperience.seeker)
+  work_experiences: WorkExperience[];
 
-    @OneToMany(() => Education, education => education.seeker)
-    education: Education[];
+  @ApiProperty({
+    type: () => [Education],
+    description: "List of Job Seeker education",
+  })
+  @OneToMany(() => Education, (education) => education.seeker)
+  education: Education[];
 
-    @OneToMany(() => SeekerSkill, skill => skill.skill)
-    skill: SeekerSkill[];
+  @ApiProperty({
+    type: () => [SeekerSkill],
+    description: "List of Job Seeker skills",
+  })
+  @OneToMany(() => SeekerSkill, (skill) => skill.skill)
+  skill: SeekerSkill[];
 }

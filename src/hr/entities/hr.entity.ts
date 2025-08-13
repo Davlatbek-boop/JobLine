@@ -59,7 +59,7 @@ export class Hr {
   @Column({ nullable: true })
   img_url: string;
 
-  @ApiProperty({ description: "Hr Company unique ID", example: 2 })
+  @ApiProperty({ description: "Company unique ID", example: 2 })
   @Column({nullable:true})
   company_id: number;
 

@@ -298,7 +298,7 @@ export class Vacancy {
 
   @ApiProperty({
     type: () => [VacancySkill],
-    description: 'Required Skill of Vacancies',
+    description: 'Required Skills of Vacancies',
   })
   @OneToMany(() => VacancySkill, (skill) => skill.vacancy)
   vacancySkills: VacancySkill[];

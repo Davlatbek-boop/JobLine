@@ -1,27 +1,18 @@
-import { IsNumber, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNumber, IsString } from "class-validator";
 
 export class CreateSeekerSocialLinkDto {
-  @ApiProperty({
-    description: 'Social link turi ID raqami (masalan, LinkedIn, GitHub va boshqalar)',
-    example: 1,
-    type: Number,
-  })
+  @ApiProperty({ description: "Social link unique ID", example: 1 })
   @IsNumber()
   social_link_id: number;
 
-  @ApiProperty({
-    description: 'Seeker (ish qidiruvchi) ID raqami',
-    example: 42,
-    type: Number,
-  })
+  @ApiProperty({ description: "Job Seeker unique ID", example: 1 })
   @IsNumber()
   seeker_id: number;
 
   @ApiProperty({
-    description: 'Foydalanuvchining ijtimoiy tarmoq havolasi',
-    example: 'https://linkedin.com/in/johndoe',
-    type: String,
+    description: "Social media networks' links",
+    example: "www.example.uz",
   })
   @IsString()
   link: string;
