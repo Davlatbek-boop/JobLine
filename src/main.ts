@@ -24,16 +24,16 @@ async function start() {
     origin: (origin, callback) => {
       const allowedOrigin = [
         "http://18.153.199.72:3003",
-        "http://localhost:3004",
+        "http://localhost:3000",
         "http://localhost:8000",
       ];
       if (!origin || allowedOrigin.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new BadRequestException('Not allowed by CORS'));
+        callback(new BadRequestException("Not allowed by CORS"));
       }
     },
-    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
+    methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
     credentials: true,
   });
 
