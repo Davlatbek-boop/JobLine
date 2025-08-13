@@ -1,17 +1,31 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { SeekerSocialLink } from '../../seeker-social-link/entities/seeker-social-link.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { SeekerSocialLink } from "../../seeker-social-link/entities/seeker-social-link.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
-@Entity('social_links')
+@Entity("social_links")
 export class SocialLink {
-  @PrimaryGeneratedColumn('increment')
+  @ApiProperty({ description: "Social link unique ID" })
+  @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column({ type: 'varchar' })
+  @ApiProperty({
+    description: "Social media",
+    example: "Telegram",
+  })
+  @Column({ type: "varchar" })
   name: string;
 
-  @Column({ type: 'varchar' })
+  @ApiProperty({
+    description: "Social media icon",
+    example: "Telegram icon",
+  })
+  @Column({ type: "varchar"})
   icon: string;
 
-   @OneToMany(() => SeekerSocialLink, socialLink => socialLink.link)
-    socialLink: SocialLink[];
+  @ApiProperty({
+    type: () => [SeekerSocialLink],
+    description: "Social network links of Job seeker",
+  })
+  @OneToMany(() => SeekerSocialLink, (socialLink) => socialLink.link)
+  socialLink: SocialLink[];
 }

@@ -2,33 +2,73 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { SeekerSocialLinkService } from './seeker-social-link.service';
 import { CreateSeekerSocialLinkDto } from './dto/create-seeker-social-link.dto';
 import { UpdateSeekerSocialLinkDto } from './dto/update-seeker-social-link.dto';
+import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { SeekerSocialLink } from './entities/seeker-social-link.entity';
 
-@Controller('seeker-social-link')
+@Controller("seeker-social-link")
 export class SeekerSocialLinkController {
-  constructor(private readonly seekerSocialLinkService: SeekerSocialLinkService) {}
+  constructor(
+    private readonly seekerSocialLinkService: SeekerSocialLinkService
+  ) {}
 
+  @ApiOperation({ summary: "CREATE SeekerSocialLink" })
+  @ApiResponse({
+    status: 200,
+    description: "Activation",
+    type: SeekerSocialLink,
+  })
   @Post()
   create(@Body() createSeekerSocialLinkDto: CreateSeekerSocialLinkDto) {
     return this.seekerSocialLinkService.create(createSeekerSocialLinkDto);
   }
 
+  @ApiOperation({ summary: "GET ALL SeekerSocialLinks" })
+  @ApiResponse({
+    status: 200,
+    description: "List of SeekerSocialLinks",
+    type: [SeekerSocialLink],
+  })
   @Get()
   findAll() {
     return this.seekerSocialLinkService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @ApiOperation({ summary: "GET One SeekerSocialLink By Id" })
+  @ApiParam({ name: "id", type: Number, example: 1 })
+  @ApiResponse({
+    status: 200,
+    description: "SeekerSocialLink",
+    type: SeekerSocialLink,
+  })
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.seekerSocialLinkService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSeekerSocialLinkDto: UpdateSeekerSocialLinkDto) {
+  @ApiOperation({ summary: "UPDATE SeekerSocialLink" })
+  @ApiParam({ name: "id", type: Number })
+  @ApiResponse({
+    status: 200,
+    description: "Update SeekerSocialLink",
+    type: SeekerSocialLink,
+  })
+  @Patch(":id")
+  update(
+    @Param("id") id: string,
+    @Body() updateSeekerSocialLinkDto: UpdateSeekerSocialLinkDto
+  ) {
     return this.seekerSocialLinkService.update(+id, updateSeekerSocialLinkDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @ApiOperation({ summary: "DELETE SeekerSocialLink" })
+  @ApiParam({ name: "id", type: Number })
+  @ApiResponse({
+    status: 200,
+    description: "Delete SeekerSocialLink",
+    type: SeekerSocialLink,
+  })
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.seekerSocialLinkService.remove(+id);
   }
 }

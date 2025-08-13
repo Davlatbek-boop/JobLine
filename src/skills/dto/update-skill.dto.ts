@@ -1,9 +1,4 @@
-import { SkillType } from "../entities/skill.entity";
+import { PartialType } from "@nestjs/swagger";
+import { CreateSeekerDto } from "../../seekers/dto/create-seeker.dto";
 
-export class UpdateSkillDto {
-  name?: string;
-  description?: string;
-  specializationId?: number;
-  skill_type?: SkillType;
-  is_active?: boolean;
-}
+export class UpdateSkillDto extends PartialType(CreateSeekerDto) {}

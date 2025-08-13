@@ -6,71 +6,130 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-} from 'typeorm';
-import { Seeker } from '../../seekers/entities/seeker.entity';
-import { Specialization } from '../../specialization/entities/specialization.entity';
+} from "typeorm";
+import { Seeker } from "../../seekers/entities/seeker.entity";
+import { Specialization } from "../../specialization/entities/specialization.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
 export enum EmploymentType {
-  FULL_TIME = 'full_time',
-  PART_TIME = 'part_time',
-  CONTRACT = 'contract',
-  INTERNSHIP = 'internship',
-  FREELANCE = 'freelance',
-  OTHER = 'other',
+  FULL_TIME = "full_time",
+  PART_TIME = "part_time",
+  CONTRACT = "contract",
+  INTERNSHIP = "internship",
+  FREELANCE = "freelance",
+  OTHER = "other",
 }
 
-@Entity('work_experience')
+@Entity("work_experience")
 export class WorkExperience {
+  @ApiProperty({ description: "Work experience unique ID" })
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({ description: "Company name", example: "Samsung" })
+  @Column({ type: "varchar", nullable: true })
   company_name: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({ description: "Position", example: "CEO" })
+  @Column({ type: "varchar", nullable: true })
   position: string;
 
-  @Column({ type: 'bigint', nullable: true })
+  @ApiProperty({ description: "Specialization unique ID", example: 2 })
+  @Column({ type: "bigint", nullable: true })
   specialization_id: number;
 
-  @Column({ type: 'bigint' })
+  @ApiProperty({ description: "Job seeker unique ID", example: 2 })
+  @Column({ type: "bigint" })
   seeker_id: number;
 
-  @Column({ type: 'enum', enum: EmploymentType })
+  @ApiProperty({
+    description: "Employment type",
+    example: EmploymentType.FULL_TIME,
+  })
+  @Column({ type: "enum", enum: EmploymentType })
   employment_type: EmploymentType;
 
-  @Column({ type: 'date', nullable: true })
+  @ApiProperty({
+    description: "Start date to work",
+    example: "2025-02-29",
+  })
+  @Column({ type: "date", nullable: true })
   start_date: string;
 
-  @Column({ type: 'date', nullable: true })
+  @ApiProperty({
+    description: "Start date to work",
+    example: "2025-02-29",
+  })
+  @Column({ type: "date", nullable: true })
   end_date: string;
 
-  @Column({ type: 'boolean', default: false })
+  @ApiProperty({
+    description: "Is it current work place",
+    example: false,
+  })
+  @Column({ type: "boolean", default: false })
   is_current: boolean;
 
-  @Column({ type: 'bigint', nullable: true })
+  @ApiProperty({
+    description: "Salary to work",
+    example: 450,
+  })
+  @Column({ type: "bigint", nullable: true })
   salary: number;
 
-  @Column({ type: 'varchar', length: 3, nullable: true })
+  @ApiProperty({
+    description: "United Stated Dollar",
+    example: "USD",
+  })
+  @Column({ type: "varchar", length: 3, nullable: true })
   currency: string;
 
-  @Column({ type: 'text', nullable: true })
+  @ApiProperty({
+    description: "Extra info about work experience",
+    example:
+      "Good place to work but I want find new one to gain more experience",
+  })
+  @Column({ type: "text", nullable: true })
   description: string;
 
-  @Column({ type: 'text', nullable: true })
+  @ApiProperty({
+    description: "Achievements at work",
+    example: "International work experience",
+  })
+  @Column({ type: "text", nullable: true })
   achievements: string;
 
+  @ApiProperty({
+    description: "Work Experience added date",
+    example: "2025-02-29T10:30:00Z",
+  })
   @CreateDateColumn()
   created_at: Date;
 
+  @ApiProperty({
+    description: "Work Experience last changed date",
+    example: "2025-02-29T10:30:00Z",
+  })
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Seeker, seeker => seeker.id, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'seeker_id' })
+  @ApiProperty({
+      type: () => Seeker,
+      description: 'Seeker info',
+      example: '1',
+    })
+  @ManyToOne(() => Seeker, (seeker) => seeker.id, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "seeker_id" })
   seeker: Seeker;
 
-  @ManyToOne(() => Specialization, specialization => specialization.id, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'specialization_id' })
+  @ApiProperty({
+      type: () => Specialization,
+      description: 'Specialization info',
+      example: '1',
+    })
+  @ManyToOne(() => Specialization, (specialization) => specialization.id, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "specialization_id" })
   specialization: Specialization;
 }
