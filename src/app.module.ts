@@ -14,6 +14,10 @@ import { HrModule } from "./hr/hr.module";
 import { Admin } from "typeorm";
 import { AdminModule } from "./admin/admin.module";
 import { JwtModule } from "@nestjs/jwt";
+import { VacanciesModule } from "./vacancies/vacancies.module";
+import { VacancySkillsModule } from "./vacancy_skills/vacancy_skills.module";
+import { ApplicationsModule } from "./applications/applications.module";
+import { CategoryModule } from "./category/category.module";
 
 @Module({
   imports: [
@@ -30,6 +34,11 @@ import { JwtModule } from "@nestjs/jwt";
       entities: [__dirname + "/**/*.entity{.ts,.js}"],
       synchronize: true,
     }),
+    CategoryModule,
+    CompaniesModule,
+    VacanciesModule,
+    VacancySkillsModule,
+    ApplicationsModule,  
     SeekersModule,
     EducationModule,
     WorkExperienceModule,

@@ -45,7 +45,7 @@ export class AdminController {
   create(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.create(createAdminDto);
   }
-
+q 
   // @UseGuards(AuthGuard, SupperAdminGuard)
   @Get()
   @ApiOperation({ summary: 'Barcha adminlarni olish' })

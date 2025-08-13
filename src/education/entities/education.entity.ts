@@ -6,61 +6,103 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-} from 'typeorm';
-import { Seeker } from '../../seekers/entities/seeker.entity';
-import { Specialization } from '../../specialization/entities/specialization.entity';
+} from "typeorm";
+import { Seeker } from "../../seekers/entities/seeker.entity";
+import { Specialization } from "../../specialization/entities/specialization.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
 export enum EducationLevel {
-  HIGH_SCHOOL = 'high_school',
-  BACHELOR = 'bachelor',
-  MASTER = 'master',
-  DOCTORATE = 'doctorate',
-  OTHER = 'other',
+  HIGH_SCHOOL = "high_school",
+  BACHELOR = "bachelor",
+  MASTER = "master",
+  DOCTORATE = "doctorate",
+  OTHER = "other",
 }
 
-@Entity('education')
+@Entity("education")
 export class Education {
+  @ApiProperty({ description: "Education unique ID" })
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'bigint', nullable: true })
+  @ApiProperty({ description: "Specialization unique ID", example: 1 })
+  @Column({ type: "bigint", nullable: true })
   specialization_id: number;
 
-  @Column({ type: 'bigint' })
+  @ApiProperty({ description: "Job seeker unique ID", example: 1 })
+  @Column({ type: "bigint",nullable:true })
   seeker_id: number;
 
-  @Column({ type: 'enum', enum: EducationLevel })
+  @ApiProperty({ description: "Education level", example: "bachelor" })
+  @Column({ type: "enum", enum: EducationLevel })
   level: EducationLevel;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({ description: "Name", example: "Cambridge" })
+  @Column({ type: "varchar", nullable: true })
   institution_name: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({ description: "Education type", example: "Economy" })
+  @Column({ type: "varchar", nullable: true })
   faculty: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({ description: "Bachelor's degree", example: "bachelor" })
+  @Column({ type: "varchar", nullable: true })
   degree_name: string;
 
-  @Column({ type: 'date', nullable: true })
+  @ApiProperty({
+    description: "Education start date",
+    example: "2025-06-29",
+  })
+  @Column({ type: "date", nullable: true })
   start_date: string;
 
-  @Column({ type: 'date', nullable: true })
+  @ApiProperty({
+    description: "Education end date",
+    example: "2025-06-29",
+  })
+  @Column({ type: "date", nullable: true })
   end_date: string;
 
-  @Column({ type: 'text', nullable: true })
+  @ApiProperty({
+    description: "Education info",
+    example: "Deep learning",
+  })
+  @Column({ type: "text", nullable: true })
   description: string;
 
+  @ApiProperty({
+    description: "Education created date",
+    example: "2025-06-29",
+  })
   @CreateDateColumn()
   created_at: Date;
 
+  @ApiProperty({
+    description: "Education last changed date",
+    example: "2025-06-29",
+  })
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Seeker, seeker => seeker.id, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'seeker_id' })
+  @ApiProperty({
+    type: () => Seeker,
+    description: "Seeker info",
+    example: "1",
+  })
+  @ManyToOne(() => Seeker, (seeker) => seeker.id, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "seeker_id" })
   seeker: Seeker;
 
-  @ManyToOne(() => Specialization, specialization => specialization.education, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'specialization_id' })
+  @ApiProperty({
+    type: () => Specialization,
+    description: "Seeker info",
+    example: "1",
+  })
+  @ManyToOne(
+    () => Specialization,
+    (specialization) => specialization.education,
+    { onDelete: "CASCADE" }
+  )
+  @JoinColumn({ name: "specialization_id" })
   specialization: Specialization;
 }

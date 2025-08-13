@@ -30,10 +30,10 @@ async function start() {
       if (!origin || allowedOrigin.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new BadRequestException('Not allowed by CORS'));
+        callback(new BadRequestException("Not allowed by CORS"));
       }
     },
-    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
+    methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
     credentials: true,
   });
 

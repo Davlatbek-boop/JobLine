@@ -78,3 +78,4 @@ export class VacancySkillsController {
     return this.vacancySkillsService.remove(+id);
   }
 }
+
