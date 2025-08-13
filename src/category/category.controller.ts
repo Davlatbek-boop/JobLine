@@ -56,7 +56,7 @@ export class CategoryController {
   @ApiResponse({
     status: 200,
     description: "Update Category",
-    type:Category,
+    type: Category,
   })
   @Patch(":id")
   update(
@@ -66,14 +66,13 @@ export class CategoryController {
     return this.categoryService.update(+id, updateCategoryDto);
   }
 
-  
-    @ApiOperation({ summary: "DELETE Category" })
-    @ApiParam({ name: "id", type: Number })
-    @ApiResponse({
-      status: 200,
-      description: "Delete Category",
-      type: Category,
-    })
+  @ApiOperation({ summary: "DELETE Category" })
+  @ApiParam({ name: "id", type: Number })
+  @ApiResponse({
+    status: 200,
+    description: "Delete Category",
+    type: Category,
+  })
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.categoryService.remove(+id);
