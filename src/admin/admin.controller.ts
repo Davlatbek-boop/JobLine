@@ -73,7 +73,7 @@ export class AdminController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, AdminSelfGuard)
   @Get(":id")
-  @ApiOperation({ summary: "ID bo'yicha adminni olish" })
+  @ApiOperation({ summary: "ID bo'yicha adminni olish     AdminSelf" })
   @ApiParam({ name: "id", description: "Admin ID", type: Number })
   @ApiResponse({ status: 200, description: "Admin topildi", type: Admin })
   @ApiResponse({ status: 404, description: "Admin topilmadi" })
@@ -84,7 +84,7 @@ export class AdminController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, AdminSelfGuard)
   @Patch(":id")
-  @ApiOperation({ summary: "Adminni yangilash" })
+  @ApiOperation({ summary: "Adminni yangilash     AdminSelf" })
   @ApiParam({
     name: "id",
     description: "Yangilanadigan admin ID",
@@ -100,7 +100,7 @@ export class AdminController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, CreatorGuard)
   @Delete(":id")
-  @ApiOperation({ summary: "Adminni o'chirish" })
+  @ApiOperation({ summary: "Adminni o'chirish     Creator" })
   @ApiParam({
     name: "id",
     description: "O'chiriladigan admin ID",
@@ -113,9 +113,9 @@ export class AdminController {
   }
 
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard, AdminSelfGuard)
+  @UseGuards(AuthGuard, AdminSelfGuard)
   @Patch(":id/password")
-  @ApiOperation({ summary: "Foydalanuvchi parolini yangilash" })
+  @ApiOperation({ summary: "Foydalanuvchi parolini yangilash      AdminSelf" })
   @ApiParam({ name: "id", type: Number })
   // @ApiBody({ type: UpdateAdminPasswordDto })
   @ApiResponse({ status: 200, description: "Parol muvaffaqiyatli yangilandi" })
