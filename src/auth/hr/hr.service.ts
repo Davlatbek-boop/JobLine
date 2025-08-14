@@ -1,10 +1,10 @@
 import {
-  BadGatewayException,
   BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { HrService } from '../../hr/hr.service';
 import { JwtService } from '@nestjs/jwt';
@@ -21,13 +21,15 @@ export class HrAuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async HrGenerateToken(hr: Hr) {
+  async generateHrTokens(hr: Hr) {
     const payload = {
       id: hr.id,
+      email: hr.email,
       role: hr.role,
       is_active: hr.is_active,
       company_id: hr.company_id,
     };
+
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: process.env.ACCESS_TOKEN_KEY,
@@ -38,6 +40,7 @@ export class HrAuthService {
         expiresIn: process.env.REFRESH_TOKEN_TIME,
       }),
     ]);
+
     return { accessToken, refreshToken };
   }
 
@@ -53,27 +56,30 @@ export class HrAuthService {
   async signInHr(signInDto: SignInDto, res: Response) {
     const hr = await this.hrService.findHrByEmail(signInDto.email);
     if (!hr) {
-      throw new BadRequestException('Email yoki password noto‘g‘ri');
+      throw new BadRequestException('Email yoki parol noto‘g‘ri');
     }
+
     const isValidPassword = await bcrypt.compare(
       signInDto.password,
       hr.password_hash,
     );
     if (!isValidPassword) {
-      throw new BadRequestException('Email yoki password noto‘g‘ri');
+      throw new BadRequestException('Email yoki parol noto‘g‘ri');
     }
 
-    const tokens = await this.HrGenerateToken(hr);
-    res.cookie('refresh_token', tokens.refreshToken, {
+    const tokens = await this.generateHrTokens(hr);
+    res.cookie('hashed_refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      maxAge: Number(process.env.COOKIE_TIME),
+      secure: true,
+      maxAge: Number(process.env.REFRESH_COOKIE_TIME),
     });
 
     try {
-      hr.refresh_token = await bcrypt.hash(tokens.refreshToken, 7);
+      const hashedRefresh = await bcrypt.hash(tokens.refreshToken, 7);
+      hr.hashed_refresh_token = hashedRefresh;
       await this.hrService.update(hr.id, hr);
     } catch (error) {
-      console.log('Token saqlashda xatolik');
+      console.error('Refresh token saqlashda xatolik:', error);
     }
 
     return {
@@ -83,49 +89,83 @@ export class HrAuthService {
   }
 
   async signOutHr(req: Request, res: Response) {
-    const refresh_token = req.cookies.refresh_token;
-    const hr = await this.hrService.findHrByRefresh(refresh_token);
+    const cookieRefresh = req.cookies['hashed_refresh_token'];
 
-    if (!hr) {
-      throw new BadGatewayException('Token yo‘q yoki noto‘g‘ri');
+    if (!cookieRefresh) {
+      throw new UnauthorizedException('Cookie da refresh token topilmadi');
     }
-    hr.refresh_token = '';
-    await this.hrService.update(hr.id, hr);
-    res.clearCookie('refresh_token');
 
-    return { message: 'Tizimdan chiqdingiz' };
+    let payload: any;
+    try {
+      payload = await this.jwtService.verify(cookieRefresh, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+      });
+    } catch (err) {
+      throw new UnauthorizedException(
+        'Refresh token yaroqsiz yoki muddati tugagan',
+      );
+    }
+
+    const hr = await this.hrService.findHrByEmail(payload.email);
+
+    if (
+      !hr ||
+      !(await bcrypt.compare(cookieRefresh, hr.hashed_refresh_token))
+    ) {
+      throw new BadRequestException(
+        'Bunday refresh tokenli HR topilmadi yoki token mos emas',
+      );
+    }
+
+    await this.hrService.clearRefreshToken(hr.id);
+    res.clearCookie('hashed_refresh_token', { httpOnly: true, secure: true });
+
+    return { message: 'HR tizimdan chiqdi' };
   }
 
-  async refreshToken(hrId: number, refresh_token: string, res: Response) {
-    const decodeToken = await this.jwtService.decode(refresh_token);
-
-    if (hrId !== decodeToken['id']) {
-      throw new ForbiddenException('Ruxsat etilmagan');
+  async refreshTokenHr(req: Request, res: Response) {
+    const cookieRefresh = req.cookies['hashed_refresh_token'];
+    if (!cookieRefresh) {
+      throw new ForbiddenException("Refresh token yo'q");
     }
 
-    const hr = await this.hrService.findOne(hrId);
-    if (!hr || !hr.refresh_token) {
+    let payload: any;
+    try {
+      payload = await this.jwtService.verify(cookieRefresh, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+      });
+    } catch {
+      throw new ForbiddenException(
+        'Refresh token yaroqsiz yoki muddati tugagan',
+      );
+    }
+
+    const hr = await this.hrService.findHrByEmail(payload.email);
+    if (!hr) {
       throw new NotFoundException('HR topilmadi');
     }
 
-    const tokenMatch = await bcrypt.compare(refresh_token, hr.refresh_token);
-    if (!tokenMatch) {
-      throw new ForbiddenException('Token mos emas');
+    const isMatch = await bcrypt.compare(
+      cookieRefresh,
+      hr.hashed_refresh_token,
+    );
+    if (!isMatch) {
+      throw new ForbiddenException("Refresh token noto'g'ri");
     }
 
-    const { accessToken, refreshToken } = await this.HrGenerateToken(hr);
-    hr.refresh_token = await bcrypt.hash(refreshToken, 7);
-    await this.hrService.update(hr.id, hr);
+    const tokens = await this.generateHrTokens(hr);
+    const hashedRefresh = await bcrypt.hash(tokens.refreshToken, 7);
+    await this.hrService.updateRefreshToken(hr.id, hashedRefresh);
 
-    res.cookie('refresh_token', refreshToken, {
-      maxAge: Number(process.env.COOKIE_TIME),
+    res.cookie('hashed_refresh_token', tokens.refreshToken, {
       httpOnly: true,
+      secure: true,
+      maxAge: Number(process.env.REFRESH_COOKIE_TIME),
     });
 
     return {
       message: 'Token yangilandi',
-      hrId: hr.id,
-      access_token: accessToken,
+      accessToken: tokens.accessToken,
     };
   }
 }

@@ -1,43 +1,41 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-// import { SeekerService } from './seeker.service';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
+import { SignInDto } from '../dto/sign-in.dto';
 import { CreateSeekerDto } from '../../seekers/dto/create-seeker.dto';
-import { UpdateSeekerDto } from '../../seekers/dto/update-seeker.dto';
-import { SeekersService } from '../../seekers/seekers.service';
+import { SeekerAuthService } from './seeker.service';
 
-@Controller('seeker')
-export class SeekerController {
-  constructor(private readonly seekerService: SeekersService) {}
+@ApiTags('Seeker Authentication')
+@Controller('auth/seeker')
+export class AuthSeekerController {
+  constructor(private readonly authSeekerService: SeekerAuthService) {}
 
-  @Post()
-  create(@Body() createSeekerDto: CreateSeekerDto) {
-    return this.seekerService.create(createSeekerDto);
+  @Post('signup')
+  async signUp(@Body() createSeekerDto: CreateSeekerDto) {
+    return this.authSeekerService.signUp(createSeekerDto);
   }
 
-  @Get()
-  findAll() {
-    return this.seekerService.findAll();
+  @Post('signin')
+  async signIn(
+    @Body() signInDto: SignInDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authSeekerService.signIn(signInDto, res);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.seekerService.findOne(+id);
+  @Post('refresh')
+  async refreshToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authSeekerService.refreshToken(req, res);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSeekerDto: UpdateSeekerDto) {
-    return this.seekerService.update(+id, updateSeekerDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.seekerService.remove(+id);
+  @Post('signout')
+  async signOut(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authSeekerService.signOut(req, res);
   }
 }

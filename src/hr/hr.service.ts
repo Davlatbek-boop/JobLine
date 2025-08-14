@@ -75,15 +75,21 @@ export class HrService {
     for (const hr of hrs) {
       const match = await bcrypt.compare(
         refresh_token,
-        hr.refresh_token || '',
+        hr.hashed_refresh_token || '',
       );
       if (match) return hr;
     }
     return null;
   }
 
-  async updateRefreshToken(id: number, refresh_token: string) {
-    await this.hrRepo.update(id, { refresh_token });
+  async updateRefreshToken(id: number, hashed_refresh_token: string) {
+    await this.hrRepo.update(id, { hashed_refresh_token });
     return { message: 'Refresh token updated successfully' };
+  }
+
+  async clearRefreshToken(adminId: number) {
+    await this.hrRepo.update(adminId, {
+      hashed_refresh_token: '',
+    });
   }
 }

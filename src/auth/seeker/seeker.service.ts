@@ -4,12 +4,10 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-// import { SeekerService } from '../seeker.service';
-// import { CreateSeekerDto } from '../dto/create-seeker.dto';
 import { SignInDto } from '../dto/sign-in.dto';
-// import { Seeker } from '../entities/seeker.entity';
 import { Response, Request } from 'express';
 import * as bcrypt from 'bcrypt';
 import { SeekersService } from '../../seekers/seekers.service';
@@ -26,6 +24,7 @@ export class SeekerAuthService {
   private async generateTokens(seeker: Seeker) {
     const payload = {
       id: seeker.id,
+      email: seeker.email,
       is_active: seeker.is_active,
     };
 
@@ -74,11 +73,11 @@ export class SeekerAuthService {
 
     const tokens = await this.generateTokens(seeker);
     const hashedRefreshToken = await bcrypt.hash(tokens.refreshToken, 7);
-
     await this.seekerService.updateRefreshToken(seeker.id, hashedRefreshToken);
 
-    res.cookie('refresh_token', tokens.refreshToken, {
+    res.cookie('heshed_refresh_token', tokens.refreshToken, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
       maxAge: Number(process.env.COOKIE_TIME),
     });
 
@@ -89,46 +88,78 @@ export class SeekerAuthService {
   }
 
   async signOut(req: Request, res: Response) {
-    const refresh_token = req.cookies.refresh_token;
-    if (!refresh_token) {
-      throw new BadRequestException('Refresh token topilmadi');
+    const refreshToken = req.cookies['heshed_refresh_token'];
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token topilmadi');
     }
 
-    const seeker = await this.seekerService.findSeekerByRefresh(refresh_token);
+    let payload: any;
+    try {
+      payload = await this.jwtService.verify(refreshToken, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+      });
+    } catch {
+      throw new UnauthorizedException('Token yaroqsiz yoki muddati tugagan');
+    }
+
+    const seeker = await this.seekerService.findSeekerByEmail(payload.email);
     if (!seeker) {
-      throw new BadRequestException('Token noto‘g‘ri');
+      throw new BadRequestException('Bunday foydalanuvchi topilmadi');
     }
 
-    await this.seekerService.updateRefreshToken(seeker.id, ''); // Bu yerda null bor edi
-    res.clearCookie('refresh_token');
+    const isMatch = await bcrypt.compare(
+      refreshToken,
+      seeker.hashed_refresh_token,
+    );
+    if (!isMatch) {
+      throw new ForbiddenException('Token mos emas');
+    }
+
+    await this.seekerService.updateRefreshToken(seeker.id, '');
+
+    res.clearCookie('heshed_refresh_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
 
     return { message: 'Siz tizimdan chiqdingiz' };
   }
 
-  async refreshToken(seekerId: number, refresh_token: string, res: Response) {
-    const decoded = this.jwtService.decode(refresh_token) as any;
-
-    if (decoded.id !== seekerId) {
-      throw new ForbiddenException('Ruxsat etilmagan');
+  async refreshToken(req: Request, res: Response) {
+    const oldRefreshToken = req.cookies['heshed_refresh_token'];
+    if (!oldRefreshToken) {
+      throw new ForbiddenException('Refresh token topilmadi');
     }
 
-    const seeker = await this.seekerService.findOne(seekerId);
-    if (!seeker || !seeker.refresh_token) {
+    let payload: any;
+    try {
+      payload = await this.jwtService.verify(oldRefreshToken, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+      });
+    } catch {
+      throw new ForbiddenException('Token noto‘g‘ri yoki muddati tugagan');
+    }
+
+    const seeker = await this.seekerService.findSeekerByEmail(payload.email);
+    if (!seeker) {
       throw new NotFoundException('Foydalanuvchi topilmadi');
     }
 
-    const isMatch = await bcrypt.compare(refresh_token, seeker.refresh_token);
+    const isMatch = await bcrypt.compare(
+      oldRefreshToken,
+      seeker.hashed_refresh_token,
+    );
     if (!isMatch) {
       throw new ForbiddenException('Token mos emas');
     }
 
     const tokens = await this.generateTokens(seeker);
-    const hashedRefreshToken = await bcrypt.hash(tokens.refreshToken, 7);
+    const newHashedRefresh = await bcrypt.hash(tokens.refreshToken, 7);
+    await this.seekerService.updateRefreshToken(seeker.id, newHashedRefresh);
 
-    await this.seekerService.updateRefreshToken(seeker.id, hashedRefreshToken);
-
-    res.cookie('refresh_token', tokens.refreshToken, {
+    res.cookie('heshed_refresh_token', tokens.refreshToken, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
       maxAge: Number(process.env.COOKIE_TIME),
     });
 

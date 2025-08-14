@@ -142,12 +142,9 @@ export class Seeker {
   @Column({ type: "enum", enum: Status, default: Status.ACTIVE })
   status: Status;
 
-  @ApiProperty({
-    description: "  Job seeker token key to use site in his/her corner",
-    example: "jcu2v48dkcbh8237",
-  })
-  @Column({ type: "varchar", nullable: true })
-  refresh_token: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  hashed_refresh_token: string;
 
   @ApiProperty({ description: "Is Job seeker at work or not ?", example: true })
   @Column({ type: "boolean", default: true })
