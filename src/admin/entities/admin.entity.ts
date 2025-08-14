@@ -32,7 +32,6 @@ export class Admin {
   @Column({ default: false })
   is_creator: string;
 
-
   @ApiProperty({
     example: 'false',
     description: 'Faqat "true" yoki "false" bo‘lishi mumkin',
@@ -40,10 +39,18 @@ export class Admin {
   @Column({ nullable: true, default: 'true' }) // Bazada default 'true'
   is_active: string;
 
-  @ApiProperty({ example: 'some-refresh-token', required: false })
-  @Column()
-  refresh_token: string;
+  // @ApiProperty({ example: 'some-refresh-token', required: false })
+  // @Column()
+  // admin_refresh_token: string;
 
+  @ApiProperty({
+    example: '$2b$10$refresh...',
+    description: 'Hashlangan refresh token',
+    nullable: true,
+    writeOnly: true,
+  })
+  @Column({ nullable: true })
+  hashed_refresh_token: string;
 
   @Column({ nullable: true })
   @ApiProperty({

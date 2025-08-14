@@ -13,8 +13,8 @@ export class SeekersService {
     private readonly seekerRepository: Repository<Seeker>,
   ) {}
 
-  async updateRefreshToken(id: number, refresh_token: string) {
-    await this.seekerRepository.update(id, { refresh_token });
+  async updateRefreshToken(id: number, hashed_refresh_token: string) {
+    await this.seekerRepository.update(id, { hashed_refresh_token });
     return { message: 'Refresh token updated successfully' };
   }
 
@@ -29,7 +29,7 @@ export class SeekersService {
       for (const admin of admins) {
         const match = await bcrypt.compare(
           refresh_token,
-          admin.refresh_token || '',
+          admin.hashed_refresh_token || '',
         );
         if (match) return admin;
       }

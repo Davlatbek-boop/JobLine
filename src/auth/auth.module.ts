@@ -1,32 +1,32 @@
-import { Module } from "@nestjs/common";
-import { JwtModule } from "@nestjs/jwt";
-import { AdminModule } from "../admin/admin.module";
-import { HrModule } from "../hr/hr.module";
-import { AdminController } from "../admin/admin.controller";
-import { HrController } from "../hr/hr.controller";
-import { SeekerController } from "./seeker/seeker.controller";
-import { AdminService } from "../admin/admin.service";
-import { HrService } from "../hr/hr.service";
-import { SeekersService } from "../seekers/seekers.service";
-import { SeekersModule } from "../seekers/seekers.module";
-import { Admin } from "../admin/entities/admin.entity";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { Hr } from "../hr/entities/hr.entity";
-import { Seeker } from "../seekers/entities/seeker.entity";
-// import { SeekerService } from './seeker/seeker.service';
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { AdminModule } from '../admin/admin.module';
+import { HrModule } from '../hr/hr.module';
+import { SeekersModule } from '../seekers/seekers.module';
+
+import { AuthAdminController } from './admin/admin.controller';
+import { HrAuthController } from './hr/hr.controller';
+import { AuthSeekerController } from './seeker/seeker.controller';
+
+import { AdminAuthService } from './admin/admin.service';
+import { HrAuthService } from './hr/hr.service';
+import { SeekerAuthService } from './seeker/seeker.service';
+
+import { Admin } from '../admin/entities/admin.entity';
+import { Hr } from '../hr/entities/hr.entity';
+import { Seeker } from '../seekers/entities/seeker.entity';
 
 @Module({
   imports: [
     JwtModule.register({ global: true }),
-    TypeOrmModule.forFeature([Admin]), // Register Admin entity for TypeORM
-    TypeOrmModule.forFeature([Hr]), // Ensure Admin entity is registered
-    TypeOrmModule.forFeature([Seeker]), // Ensure Admin entity is registered
-    Admin,
+    TypeOrmModule.forFeature([Admin, Hr, Seeker]),
     AdminModule,
     HrModule,
     SeekersModule,
   ],
-  controllers: [AdminController, HrController, SeekerController],
-  providers: [AdminService, HrService, SeekersService],
+  controllers: [AuthAdminController, HrAuthController, AuthSeekerController],
+  providers: [AdminAuthService, HrAuthService, SeekerAuthService],
 })
 export class AuthModule {}

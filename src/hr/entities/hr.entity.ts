@@ -67,16 +67,16 @@ export class Hr {
   @Column({nullable:true})
   company_id: number;
 
-  @ApiProperty({ description: "Hr role", example: true })
+  @ApiProperty({ description: "Hr ", example: "hr"})
   @Column({ default: false })
-  role: boolean;
+  role: string;
 
   @ApiProperty({
     description: "Hr token key to use site in his/her corner",
     example: "jcu2v48dkcbh8237",
   })
   @Column({ nullable: true })
-  refresh_token: string;
+  hashed_refresh_token: string;
 
   @ApiProperty({ description: "Is Hr at work or not ?", example: true })
   @Column({ default: true })

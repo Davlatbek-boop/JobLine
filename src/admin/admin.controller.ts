@@ -20,12 +20,8 @@ import {
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { Admin } from './entities/admin.entity'; // Agar Admin entity mavjud bo'lsa
-// import { AuthGuard } from '../common/guard/auth.guard';
-// import { SupperAdminGuard } from '../common/guard/supperAmin.guard';
-// import { AdminGuard } from '../common/guard/admin.guard';
-// import { SelfAdminGuard } from '../common/guard/selfadmin.guard';
-// import { UpdateAdminPasswordDto } from './dto/update-password.dto';
+import { Admin } from './entities/admin.entity';
+import { UpdateAdminPasswordDto } from './dto/update_password';
 
 @ApiBearerAuth('access-token')
 @ApiTags('admin')
@@ -33,7 +29,6 @@ import { Admin } from './entities/admin.entity'; // Agar Admin entity mavjud bo'
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  // @UseGuards(AuthGuard, SupperAdminGuard)
   @Post()
   @ApiOperation({ summary: 'Yangi admin yaratish' })
   @ApiBody({ type: CreateAdminDto })
@@ -46,7 +41,6 @@ export class AdminController {
     return this.adminService.create(createAdminDto);
   }
 
-  // @UseGuards(AuthGuard, SupperAdminGuard)
   @Get()
   @ApiOperation({ summary: 'Barcha adminlarni olish' })
   @ApiResponse({ status: 200, description: "Adminlar ro'yxati", type: [Admin] })
@@ -54,22 +48,21 @@ export class AdminController {
     return this.adminService.findAll();
   }
 
-  @Get('activate/:link')
-  async activateAdmin(@Param('link') link: string) {
-    const admin = await this.adminService.findAdminByActivationLink(link);
+  // @Get('activate/:link')
+  // async activateAdmin(@Param('link') link: string) {
+  //   const admin = await this.adminService.findAdminByActivationLink(link);
 
-    if (!admin) {
-      throw new NotFoundException('Aktivatsiya linki notogri!');
-    }
+  //   if (!admin) {
+  //     throw new NotFoundException('Aktivatsiya linki notogri!');
+  //   }
 
-    admin.is_active = 'true';
-    admin.active_link = '';
-    await this.adminService.update(admin.id, admin);
+  //   admin.is_active = 'true';
+  //   admin.active_link = '';
+  //   await this.adminService.update(admin.id, admin);
 
-    return { message: 'Profil muvaffaqiyatli faollashtirildi!' };
-  }
+  //   return { message: 'Profil muvaffaqiyatli faollashtirildi!' };
+  // }
 
-  // @UseGuards(AuthGuard, AdminGuard, SelfAdminGuard)
   @Get(':id')
   @ApiOperation({ summary: "ID bo'yicha adminni olish" })
   @ApiParam({ name: 'id', description: 'Admin ID', type: Number })
@@ -79,7 +72,6 @@ export class AdminController {
     return this.adminService.findOne(+id);
   }
 
-  // @UseGuards(AuthGuard, AdminGuard, SelfAdminGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Adminni yangilash' })
   @ApiParam({
@@ -94,7 +86,6 @@ export class AdminController {
     return this.adminService.update(+id, updateAdminDto);
   }
 
-  // @UseGuards(AuthGuard, SupperAdminGuard)
   @Delete(':id')
   @ApiOperation({ summary: "Adminni o'chirish" })
   @ApiParam({
@@ -108,24 +99,24 @@ export class AdminController {
     return this.adminService.remove(+id);
   }
 
-  // @Patch(':id/password')
-  //   @ApiOperation({ summary: 'Foydalanuvchi parolini yangilash' })
-  //   @ApiParam({ name: 'id', type: Number })
-  //   // @ApiBody({ type: UpdateAdminPasswordDto })
-  //   @ApiResponse({ status: 200, description: 'Parol muvaffaqiyatli yangilandi' })
-  //   async updatePassword(
-  //     @Param('id') id: number,
-  //     @Body() dto: UpdateAdminPasswordDto,
-  //   ): Promise<{ message: string }> {
-  //     const result = await this.adminService.updatePassword(id, dto);
-  //     return { message: result };
-  //   }
-  
-    @Get('activate/:link')
-    @ApiOperation({ summary: 'Foydalanuvchini aktivlashtirish' })
-    @ApiParam({ name: 'link', type: String })
-    @ApiResponse({ status: 200, description: 'Foydalanuvchi aktivlashtirildi' })
-    activate(@Param('link') link: string) {
-      return this.adminService.activate(link);
+  @Patch(':id/password')
+    @ApiOperation({ summary: 'Foydalanuvchi parolini yangilash' })
+    @ApiParam({ name: 'id', type: Number })
+    // @ApiBody({ type: UpdateAdminPasswordDto })
+    @ApiResponse({ status: 200, description: 'Parol muvaffaqiyatli yangilandi' })
+    async updatePassword(
+      @Param('id') id: number,
+      @Body() dto: UpdateAdminPasswordDto,
+    ): Promise<{ message: string }> {
+      const result = await this.adminService.updatePassword(id, dto);
+      return { message: result };
     }
+  
+    // @Get('activate/:link')
+    // @ApiOperation({ summary: 'Foydalanuvchini aktivlashtirish' })
+    // @ApiParam({ name: 'link', type: String })
+    // @ApiResponse({ status: 200, description: 'Foydalanuvchi aktivlashtirildi' })
+    // activate(@Param('link') link: string) {
+    //   return this.adminService.activate(link);
+    // }
 }

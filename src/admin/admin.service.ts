@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { UpdateAdminPasswordDto } from './dto/update_password';
 // import { UpdateAdminPasswordDto } from './dto/update-password.dto';
 
 @Injectable()
@@ -101,7 +102,7 @@ export class AdminService {
     for (const admin of admins) {
       const match = await bcrypt.compare(
         refresh_token,
-        admin.refresh_token || '',
+        admin.hashed_refresh_token || '',
       );
       if (match) return admin;
     }
@@ -109,8 +110,8 @@ export class AdminService {
     return null;
   }
 
-  async updateRefreshToken(id: number, refresh_token: string) {
-    await this.adminRepo.update(id, { refresh_token });
+  async updateRefreshToken(id: number, hashed_refresh_token: string) {
+    await this.adminRepo.update(id, { hashed_refresh_token });
     return { message: 'Refresh token updated successfully' };
   }
 
@@ -118,56 +119,65 @@ export class AdminService {
   //   return await this.userRepo.findOne({ where: { active_link: link } });
   // }
 
-  async activate(link: string) {
-    if (!link) {
-      throw new BadRequestException('Activation link jo‘natilmadi!');
-    }
-
-    const admin = await this.adminRepo.findOne({
-      where: { active_link: link },
-    });
-
-    if (!admin) {
-      throw new NotFoundException('Aktivatsiya linki notogri!');
-    }
-
-    if (admin.is_active) {
-      throw new BadRequestException('Allaqachon faollashtirilgan');
-    }
-
-    admin.is_active = 'true';
-    admin.active_link = ''; // linkni bekor qilish
-
-    await this.adminRepo.save(admin);
-
-    return {
-      message: 'Profil muvaffaqiyatli faollashtirildi',
-      is_active: admin.is_active,
-    };
-  }
-
-  // async updatePassword(
-  //   id: number,
-  //   dto: UpdateAdminPasswordDto,
-  // ): Promise<string> {
-  //   const user = await this.adminRepo.findOne({ where: { id } });
-
-  //   if (!user) throw new NotFoundException('Foydalanuvchi topilmadi');
-
-  //   const isMatch = await bcrypt.compare(dto.oldpassword, user.hashed_password);
-  //   if (!isMatch) throw new BadRequestException("Eski parol noto'g'ri");
-
-  //   if (dto.newpassword !== dto.confirm_password) {
-  //     throw new BadRequestException(
-  //       'Yangi parol va tasdiqlash paroli mos emas',
-  //     );
+  // async activate(link: string) {
+  //   if (!link) {
+  //     throw new BadRequestException('Activation link jo‘natilmadi!');
   //   }
 
-  //   const hashedNewPassword = await bcrypt.hash(dto.newpassword, 7);
-  //   user.hashed_password = hashedNewPassword;
+  //   const admin = await this.adminRepo.findOne({
+  //     where: { active_link: link },
+  //   });
 
-  //   await this.adminRepo.save(user);
+  //   if (!admin) {
+  //     throw new NotFoundException('Aktivatsiya linki notogri!');
+  //   }
 
-  //   return 'Parol muvaffaqiyatli yangilandi';
+  //   if (admin.is_active) {
+  //     throw new BadRequestException('Allaqachon faollashtirilgan');
+  //   }
+
+  //   admin.is_active = 'true';
+  //   admin.active_link = ''; // linkni bekor qilish
+
+  //   await this.adminRepo.save(admin);
+
+  //   return {
+  //     message: 'Profil muvaffaqiyatli faollashtirildi',
+  //     is_active: admin.is_active,
+  //   };
   // }
+
+  async clearRefreshToken(adminId: number) {
+    await this.adminRepo.update(adminId, {
+      hashed_refresh_token: '',
+    });
+  }
+
+  async updatePassword(
+    id: number,
+    dto: UpdateAdminPasswordDto,
+  ): Promise<string> {
+    const user = await this.adminRepo.findOne({ where: { id } });
+
+    if (!user) throw new NotFoundException('Foydalanuvchi topilmadi');
+
+    const isMatch = await bcrypt.compare(
+      dto.oldpassword,
+      user.hashed_refresh_token,
+    );
+    if (!isMatch) throw new BadRequestException("Eski parol noto'g'ri");
+
+    if (dto.newpassword !== dto.confirm_password) {
+      throw new BadRequestException(
+        'Yangi parol va tasdiqlash paroli mos emas',
+      );
+    }
+
+    const hashedNewPassword = await bcrypt.hash(dto.newpassword, 7);
+    user.hashed_refresh_token = hashedNewPassword;
+
+    await this.adminRepo.save(user);
+
+    return 'Parol muvaffaqiyatli yangilandi';
+  }
 }
