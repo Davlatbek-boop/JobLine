@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   DefaultValuePipe,
   BadRequestException,
+  UseGuards,
 } from "@nestjs/common";
 import { ApplicationsService } from "./applications.service";
 import { CreateApplicationDto } from "./dto/create-application.dto";
@@ -22,6 +23,7 @@ import {
   ApiResponse,
 } from "@nestjs/swagger";
 import { Application } from "./entities/application.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
 
 @ApiBearerAuth()
 @Controller("applications")
@@ -30,6 +32,7 @@ export class ApplicationsController {
 
 
   @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
   @ApiOperation({ summary: "CREATE Application" })
   @ApiResponse({
     status: 200,
@@ -42,6 +45,7 @@ export class ApplicationsController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "GET ALL Applications" })
   @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
   @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
@@ -56,6 +60,7 @@ export class ApplicationsController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "GET One Application By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -146,5 +151,18 @@ export class ApplicationsController {
       Number(page),
       Number(limit)
     );
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get application by seeker id" })
+  @ApiParam({ name: "id", type: Number })
+  @ApiResponse({
+    status: 200,
+    description: "Get application by seeker id",
+    type: Application,
+  })
+  @Get("by-seeker/:id")
+  getAllBySeekerId(@Param("id") id: string) {
+    return this.applicationsService.getAllBySeekerId(+id);
   }
 }

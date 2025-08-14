@@ -35,7 +35,7 @@ export class AdminController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, CreatorGuard)
   @Post()
-  @ApiOperation({ summary: "Yangi admin yaratish" })
+  @ApiOperation({ summary: "Yangi admin yaratish     Creator" })
   @ApiBody({ type: CreateAdminDto })
   @ApiResponse({
     status: 201,
@@ -47,9 +47,9 @@ export class AdminController {
   }
 
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard, SupperAdminGuard)
+  @UseGuards(AuthGuard, CreatorGuard)
   @Get()
-  @ApiOperation({ summary: "Barcha adminlarni olish" })
+  @ApiOperation({ summary: "Barcha adminlarni olish     Creator" })
   @ApiResponse({ status: 200, description: "Adminlar ro'yxati", type: [Admin] })
   findAll() {
     return this.adminService.findAll();
@@ -70,6 +70,8 @@ export class AdminController {
   //   return { message: 'Profil muvaffaqiyatli faollashtirildi!' };
   // }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminSelfGuard)
   @Get(":id")
   @ApiOperation({ summary: "ID bo'yicha adminni olish" })
   @ApiParam({ name: "id", description: "Admin ID", type: Number })
@@ -110,6 +112,8 @@ export class AdminController {
     return this.adminService.remove(+id);
   }
 
+  @ApiBearerAuth()
+  // @UseGuards(AuthGuard, AdminSelfGuard)
   @Patch(":id/password")
   @ApiOperation({ summary: "Foydalanuvchi parolini yangilash" })
   @ApiParam({ name: "id", type: Number })

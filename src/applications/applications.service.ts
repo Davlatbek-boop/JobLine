@@ -32,7 +32,10 @@ export class ApplicationsService {
   }
 
   findOne(id: number) {
-    return this.applicationRepo.findOne({ where: { id },  relations: ['vacancy'], });
+    return this.applicationRepo.findOne({
+      where: { id },
+      relations: ["vacancy"],
+    });
   }
 
   async update(id: number, updateApplicationDto: UpdateApplicationDto) {
@@ -84,5 +87,14 @@ export class ApplicationsService {
       take: limit,
     });
     return { success: true, total, page, limit, data: items };
+  }
+
+  async getAllBySeekerId(id: number) {
+    const applications = await this.applicationRepo.find({
+      where: { seeker: { id } },
+      relations: ["seeker"],
+    });
+
+    return applications;
   }
 }

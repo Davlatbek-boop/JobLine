@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Vacancy } from "../../vacancies/entities/vacancy.entity";
 import { IsDateString, IsInt, IsOptional, IsString } from "class-validator";
+import { Seeker } from "../../seekers/entities/seeker.entity";
 
 export class CreateApplicationDto {
   @ApiProperty({ description: "Cover letter", example: "Cover letter" })
@@ -47,32 +48,16 @@ export class CreateApplicationDto {
   interview_notes?: string;
 
   @ApiProperty({
-    description: "A day when job seeker apply for this company",
-    example: "2025-06-29",
-  })
-  @IsOptional()
-  @IsDateString()
-  applied_at?: Date;
-
-  @ApiProperty({
-    description: "A first day when job seeker reed this vacancy",
-    example: "2025-06-15",
-  })
-  @IsOptional()
-  @IsDateString()
-  reviewed_at?: Date;
-
-  @ApiProperty({
     description: "Vacancy info",
     example: 1,
   })
   @IsOptional()
   @IsInt()
-  vacancy: Vacancy;
+  vacancyId: number;
 
-  //   @ApiProperty({
-  //     description: 'Seeker info',
-  //     example: '1',
-  //   })
-  //   seeker: Seeker;
+  @ApiProperty({
+    description: "Seeker info",
+    example: "1",
+  })
+  seekerId: number;
 }

@@ -43,7 +43,7 @@ export class CreateAdminDto {
   email: string;
 
   @ApiProperty({
-    example: 'StrongPassword123!',
+    example: 'Uzbek1st@n',
     description: 'Password (must be at least 8 characters)',
   })
   @IsNotEmpty({ message: 'Password is required' })
@@ -52,7 +52,7 @@ export class CreateAdminDto {
   password: string;
 
   @ApiProperty({
-    example: 'StrongPassword123!',
+    example: 'Uzbek1st@n',
     description: 'Password confirmation',
   })
   @IsNotEmpty({ message: 'Password confirmation is required' })

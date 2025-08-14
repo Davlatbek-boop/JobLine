@@ -103,6 +103,12 @@ export class Application {
   @ManyToOne(() => Seeker, (seeker) => seeker.applications)
   seeker: Seeker;
 
+  @Column()
+  seekerId: number;
+
+  @Column()
+  vacancyId: number;
+
   @ApiProperty({
     type: () => Vacancy,
     description: "Vacancy info",
@@ -110,6 +116,4 @@ export class Application {
   })
   @ManyToOne(() => Vacancy, (vacancy) => vacancy.applications)
   vacancy: Vacancy;
-
-  
 }

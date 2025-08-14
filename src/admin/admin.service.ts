@@ -157,13 +157,13 @@ export class AdminService {
     id: number,
     dto: UpdateAdminPasswordDto,
   ): Promise<string> {
-    const user = await this.adminRepo.findOne({ where: { id } });
+    const admin = await this.adminRepo.findOne({ where: { id } });
 
-    if (!user) throw new NotFoundException('Foydalanuvchi topilmadi');
+    if (!admin) throw new NotFoundException('Foydalanuvchi topilmadi');
 
     const isMatch = await bcrypt.compare(
       dto.oldpassword,
-      user.hashed_refresh_token,
+      admin.password_hash,
     );
     if (!isMatch) throw new BadRequestException("Eski parol noto'g'ri");
 
@@ -174,9 +174,9 @@ export class AdminService {
     }
 
     const hashedNewPassword = await bcrypt.hash(dto.newpassword, 7);
-    user.hashed_refresh_token = hashedNewPassword;
+    admin.password_hash = hashedNewPassword;
 
-    await this.adminRepo.save(user);
+    await this.adminRepo.save(admin);
 
     return 'Parol muvaffaqiyatli yangilandi';
   }

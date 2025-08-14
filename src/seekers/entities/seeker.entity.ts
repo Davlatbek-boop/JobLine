@@ -186,10 +186,6 @@ export class Seeker {
   skill: SeekerSkill[];
 
 
-  @ApiProperty({
-    type: () => [Application],
-    description: "List of Aplication",
-  })
   @OneToMany(() => Application, (application) => application.seeker)
   applications: Application[];
 
