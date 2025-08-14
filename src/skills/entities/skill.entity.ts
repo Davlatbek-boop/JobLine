@@ -11,6 +11,7 @@ import {
 import { Specialization } from "../../specialization/entities/specialization.entity";
 import { VacancySkill } from "../../vacancy_skills/entities/vacancy_skill.entity";
 import { ApiProperty } from "@nestjs/swagger";
+import { SeekerSkill } from "../../seeker-skills/entities/seeker-skill.entity";
 
 export enum SkillType {
   TECHNICAL = "Technical",
@@ -90,4 +91,13 @@ export class Skill {
     onDelete: "CASCADE",
   })
   vacancySkills: VacancySkill[];
+
+  @ApiProperty({
+    type: () => [SeekerSkill],
+    description: 'Required Skill of Vacancies',
+  })
+  @OneToMany(() => SeekerSkill, (seekerSkill) => seekerSkill.skill, {
+    onDelete: "CASCADE",
+  })
+  seekerSkill: SeekerSkill[];
 }

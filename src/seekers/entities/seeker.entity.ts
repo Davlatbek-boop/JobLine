@@ -11,6 +11,8 @@ import { WorkExperience } from "../../work-experience/entities/work-experience.e
 import { Education } from "../../education/entities/education.entity";
 import { SeekerSkill } from "../../seeker-skills/entities/seeker-skill.entity";
 import { ApiProperty } from "@nestjs/swagger";
+import { Application } from "../../applications/entities/application.entity";
+import { SeekerSocialLink } from "../../seeker-social-link/entities/seeker-social-link.entity";
 
 export enum Gender {
   MALE = "male",
@@ -185,4 +187,20 @@ export class Seeker {
   })
   @OneToMany(() => SeekerSkill, (skill) => skill.skill)
   skill: SeekerSkill[];
+
+
+  @ApiProperty({
+    type: () => [Application],
+    description: "List of Aplication",
+  })
+  @OneToMany(() => Application, (application) => application.seeker)
+  applications: Application[];
+
+
+   @ApiProperty({
+    type: () => [SeekerSocialLink],
+    description: "List of seekerSocialLink",
+  })
+  @OneToMany(() => SeekerSocialLink, (seekerSocialLink) => seekerSocialLink.seeker)
+  seekerSocialLink: SeekerSocialLink[];
 }

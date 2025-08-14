@@ -5,7 +5,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
 } from 'typeorm';
+import { Company } from '../../companies/entities/company.entity';
+import { Vacancy } from '../../vacancies/entities/vacancy.entity';
 
 export enum HrRole {
   Hr = 'hr',
@@ -91,4 +95,11 @@ export class Hr {
   })
   @UpdateDateColumn()
   updated_at: Date;
+
+
+  @ManyToOne(()=> Company, (company)=> company.hr)
+  company: Company
+
+  @OneToMany(()=> Vacancy, (vacancies)=> vacancies.hr)
+  vacancy: Vacancy[]
 }

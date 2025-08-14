@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
 } from "@nestjs/common";
+
 import { SeekerSkillsService } from "./seeker-skills.service";
 import { CreateSeekerSkillDto } from "./dto/create-seeker-skill.dto";
 import { UpdateSeekerSkillDto } from "./dto/update-seeker-skill.dto";
@@ -24,6 +25,11 @@ export class SeekerSkillsController {
     type: SeekerSkill,
   })
   @Post()
+  @ApiOperation({ summary: "Yangi seeker skill qo‘shish" })
+  @ApiResponse({
+    status: 201,
+    description: "Seeker skill muvaffaqiyatli qo‘shildi",
+  })
   create(@Body() createSeekerSkillDto: CreateSeekerSkillDto) {
     return this.seekerSkillsService.create(createSeekerSkillDto);
   }
@@ -35,9 +41,12 @@ export class SeekerSkillsController {
     type: [SeekerSkill],
   })
   @Get()
+  @ApiOperation({ summary: "Barcha seeker skill’larni olish" })
+  @ApiResponse({ status: 200, description: "Seeker skill ro‘yxati" })
   findAll() {
     return this.seekerSkillsService.findAll();
   }
+
 
   @ApiOperation({ summary: "GET One SeekerSkill By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
@@ -50,6 +59,7 @@ export class SeekerSkillsController {
   findOne(@Param("id") id: string) {
     return this.seekerSkillsService.findOne(+id);
   }
+
 
   @ApiOperation({ summary: "UPDATE SeekerSkill" })
   @ApiParam({ name: "id", type: Number })
@@ -65,6 +75,7 @@ export class SeekerSkillsController {
   ) {
     return this.seekerSkillsService.update(+id, updateSeekerSkillDto);
   }
+
 
   @ApiOperation({ summary: "DELETE SeekerSkill" })
   @ApiParam({ name: "id", type: Number })
