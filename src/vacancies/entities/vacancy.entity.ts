@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 import {
   Column,
   CreateDateColumn,
@@ -6,264 +6,296 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { Application } from '../../applications/entities/application.entity';
-import { VacancySkill } from '../../vacancy_skills/entities/vacancy_skill.entity';
+} from "typeorm";
+import { Application } from "../../applications/entities/application.entity";
+import { VacancySkill } from "../../vacancy_skills/entities/vacancy_skill.entity";
 
-@Entity('vacancies')
+export enum WorkScheduleType {
+  "6_1" = "6_1",
+  "5_2" = "5_2",
+  "4_4" = "4_4",
+  "4_3" = "4_3",
+  "4_2" = "4_2",
+  "3_3" = "3_3",
+  "3_2" = "3_2",
+  "2_2" = "2_2",
+  "2_1" = "2_1",
+  "1_3" = "1_3",
+  "1_2" = "1_2",
+  WEEKENDS_ONLY = "weekends_only",
+  FLEXIBLE = "flexible",
+  SHIFT_WORK = "shift_work",
+  OTHER = "other",
+}
+
+export enum WorkFormatType {
+  ON_SITE = "on_site",
+  REMOTE = "remote",
+  HYBRID = "hybrid",
+  FIELD_BASED = "field_based",
+}
+
+export enum RequiredExperienceType {
+  NO_EXPERIENCE = "no_experience",
+  "1_to_3_YEARS" = "1_to_3_years",
+  "3_to_6_YEARS" = "3_to_6_years",
+  MORE_HTAN_6_YEARS = "more_than_6_years",
+}
+
+export enum RequiredEducationType {
+  NO_REQUIREMENT = "no_requirement",
+  HIGH_SCHOOL = "high_school",
+  VOCATIONAL = "vocational",
+  BACHELOR = "bachelor",
+  MASTER = "master",
+  PHD = "phd",
+}
+
+export enum StatusType {
+  DRAFT = "draft",
+  ACTIVE = "active",
+  PAUSED = "paused",
+  CLOSED = "closed",
+  EXPIRED = "expired",
+}
+
+export enum PriorityType {
+  NORMAL = "normal",
+  FEATURED = "featured",
+  URGENT = "urgent",
+}
+
+export enum EmploymentType{
+ FULL_TIME= "full_time",PART_TIME='part_time',
+ CONTRACT="contract",INTERNSHIP='internship',TEMPORARY="temporary"
+}
+
+@Entity("vacancies")
 export class Vacancy {
-  @ApiProperty({ description: 'Vacancy unique ID' })
+  @ApiProperty({ description: "Vacancy unique ID" })
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ description: 'Vacancy Title', example: 'Developer' })
+  @ApiProperty({ description: "Vacancy Title", example: "Developer" })
   @Column()
   title: string;
 
-  @ApiProperty({ description: 'Description', example: 'Clean Working space' })
+  @ApiProperty({ description: "Description", example: "Clean Working space" })
   @Column({
-    type: 'text',
+    type: "text",
   })
   description: string;
 
   @ApiProperty({
     description:
-      'Mast have activities for job seeker to work with this company',
-    example: 'Clean Working space',
+      "Mast have activities for job seeker to work with this company",
+    example: "Clean Working space",
   })
   @Column({
-    type: 'text',
+    type: "text",
   })
   requirements: string;
 
   @ApiProperty({
     description:
-      'Activities to do inserious manner for job seeker to work with this company',
-    example: 'Clean Working space',
+      "Activities to do inserious manner for job seeker to work with this company",
+    example: "Clean Working space",
   })
   @Column({
-    type: 'text',
+    type: "text",
     nullable: true,
   })
   responsibilities?: string;
 
   @ApiProperty({
-    description: 'Company address',
-    example: 'Tashkent Uzbekistan',
+    description: "Company address",
+    example: "Tashkent Uzbekistan",
   })
   @Column({ nullable: true })
   address?: string;
 
   @ApiProperty({
-    description: 'Companies minimum salary for new worker',
-    example: '500',
+    description: "Companies minimum salary for new worker",
+    example: "500",
   })
   @Column({ nullable: true })
   salaryFrom?: number;
 
   @ApiProperty({
-    description: 'Companies maximum salary for new worker',
-    example: '4000',
+    description: "Companies maximum salary for new worker",
+    example: "4000",
   })
   @Column({ nullable: true })
   salaryTo?: number;
 
   @ApiProperty({
-    description: 'Companies minimum salary for new worker',
-    example: 'Clean Working space',
+    description: "Companies minimum salary for new worker",
+    example: "Clean Working space",
   })
-  @Column({ default: 'UZS', nullable: true })
+  @Column({ default: "UZS", nullable: true })
   salaryCurrency?: string;
 
   @ApiProperty({
-    description: 'Salary agreement',
+    description: "Salary agreement",
     example: false,
   })
   @Column({ default: false, nullable: true })
   isSalaryNegotiable?: boolean;
 
   @ApiProperty({
-    description: 'Working condition',
-    example: 'hybrid',
+    description: "Working condition",
+    example: "hybrid",
   })
   @Column({
-    type: 'enum',
-    enum: ['on_site', 'remote', 'hybrid', 'field_based'],
+    type: "enum",
+    enum: WorkFormatType,
   })
-  workFormat: string;
+  workFormat: WorkFormatType;
 
   @ApiProperty({
-    description: 'Working condition',
-    example: '6_1',
+    description: "Working condition",
+    example: WorkScheduleType["6_1"],
   })
   @Column({
-    type: 'enum',
-    enum: [
-      '6_1',
-      '5_2',
-      '4_4',
-      '4_3',
-      '4_2',
-      '3_3',
-      '3_2',
-      '2_2',
-      '2_1',
-      '1_3',
-      '1_2',
-      'weekends_only',
-      'flexible',
-      'shift_work',
-      'other',
-    ],
+    type: "enum",
+    enum: WorkScheduleType,
   })
-  workSchedule: string;
+  workSchedule: WorkScheduleType;
 
   @ApiProperty({
-    description: 'Working days of week',
+    description: "Working days of week",
     example: 5,
   })
   @Column({ nullable: true })
   workHoursPerWeek?: number;
 
   @ApiProperty({
-    description: 'Working format',
-    example: 'full_time',
+    description: "Working format",
+    example: "full_time",
   })
   @Column({
-    type: 'enum',
-    enum: ['full_time', 'part_time', 'contract', 'internship', 'temporary'],
-    default: 'full_time',
+    type: "enum",
+    enum: EmploymentType,
+    default: EmploymentType.FULL_TIME,
     nullable: true,
   })
-  employmentType?: string;
+  employmentType?: EmploymentType;
 
   @ApiProperty({
-    description: 'Working experience',
-    example: 'no_experience',
+    description: "Working experience",
+    example: "no_experience",
   })
   @Column({
-    type: 'enum',
-    enum: [
-      'no_experience',
-      '1_to_3_years',
-      '3_to_6_years',
-      'more_than_6_years',
-    ],
+    type: "enum",
+    enum: RequiredExperienceType,
   })
-  experienceRequired: string;
+  experienceRequired: RequiredExperienceType;
 
   @ApiProperty({
-    description: 'Education level',
-    example: 'bachelor',
+    description: "Education level",
+    example: "bachelor",
   })
   @Column({
-    type: 'enum',
-    enum: [
-      'no_requirement',
-      'high_school',
-      'vocational',
-      'bachelor',
-      'master',
-      'phd',
-    ],
-    default: 'no_requirement',
+    type: "enum",
+    enum: RequiredEducationType,
+    default: RequiredEducationType.NO_REQUIREMENT,
     nullable: true,
   })
-  educationRequired?: string;
+  educationRequired?: RequiredEducationType;
 
   @ApiProperty({
-    description: 'Maximum avaiable work staff count',
-    example: '1',
+    description: "Maximum avaiable work staff count",
+    example: "1",
   })
   @Column({ nullable: true })
   positionsAvailable?: number;
 
   @ApiProperty({
-    description: 'Last date to apply for this vacancy',
-    example: '2025-05-29',
+    description: "Last date to apply for this vacancy",
+    example: "2025-05-29",
   })
   @Column({ nullable: true })
   applicationDeadline?: Date;
 
   @ApiProperty({
-    description: 'Company email',
-    example: 'company@gmail.com',
+    description: "Company email",
+    example: "company@gmail.com",
   })
   @Column({ nullable: true })
   contactEmail?: string;
 
   @ApiProperty({
-    description: 'Company phone',
-    example: '+998901234567',
+    description: "Company phone",
+    example: "+998901234567",
   })
   @Column({ nullable: true })
   contactPhone?: string;
 
   @ApiProperty({
-    description: 'Vacancy condition',
-    example: 'draft',
+    description: "Vacancy condition",
+    example: "draft",
   })
   @Column({
-    type: 'enum',
-    enum: ['draft', 'active', 'paused', 'closed', 'expired'],
-    default: 'active',
+    type: "enum",
+    enum: StatusType,
+    default: StatusType.ACTIVE,
     nullable: true,
   })
-  status?: string;
+  status?: StatusType;
 
   @ApiProperty({
-    description: 'Vacancy is hurry, or with unusuable feature or normal',
-    example: 'normal',
+    description: "Vacancy is hurry, or with unusuable feature or normal",
+    example: "normal",
   })
   @Column({
-    type: 'enum',
-    enum: ['normal', 'featured', 'urgent'],
-    default: 'normal',
+    type: "enum",
+    enum: PriorityType,
+    default: PriorityType.NORMAL,
     nullable: true,
   })
-  priority?: string;
+  priority?: PriorityType;
 
   @ApiProperty({
-    description: 'Number of view count',
-    example: '1',
+    description: "Number of view count",
+    example: "1",
     nullable: true,
   })
   @Column({ default: 0 })
   views_count?: number;
 
   @ApiProperty({
-    description: 'Number of appliers',
-    example: '1',
+    description: "Number of appliers",
+    example: "1",
   })
   @Column({ default: 0 })
   applications_count?: number;
 
   @ApiProperty({
-    description: 'Vacancy Published date',
-    example: '2025-05-29T10:30:00Z',
+    description: "Vacancy Published date",
+    example: "2025-05-29T10:30:00Z",
   })
-  @CreateDateColumn({ type: 'timestamp', nullable: true })
+  @CreateDateColumn({ type: "timestamp", nullable: true })
   published_at?: Date;
 
   @ApiProperty({
-    description: 'Vacancy expiry date',
-    example: '2025-05-29T10:30:00Z',
+    description: "Vacancy expiry date",
+    example: "2025-05-29T10:30:00Z",
   })
-  @CreateDateColumn({ type: 'timestamp', nullable: true })
+  @CreateDateColumn({ type: "timestamp", nullable: true })
   expires_at?: Date;
 
   @ApiProperty({
-    description: 'Vacancy Published date',
-    example: '2025-05-29T10:30:00Z',
+    description: "Vacancy Published date",
+    example: "2025-05-29T10:30:00Z",
   })
-  @CreateDateColumn({ type: 'timestamp', nullable: true })
+  @CreateDateColumn({ type: "timestamp", nullable: true })
   created_at?: Date;
 
   @ApiProperty({
-    description: 'Vacancy changed date',
-    example: '2025-05-29T10:30:00Z',
+    description: "Vacancy changed date",
+    example: "2025-05-29T10:30:00Z",
   })
-  @UpdateDateColumn({ type: 'timestamp', nullable: true })
+  @UpdateDateColumn({ type: "timestamp", nullable: true })
   updated_at?: Date;
   // @ApiProperty({
   //   type: () => Hr,
@@ -291,14 +323,14 @@ export class Vacancy {
 
   @ApiProperty({
     type: () => [Application],
-    description: 'Application of Vacancies',
+    description: "Application of Vacancies",
   })
   @OneToMany(() => Application, (application) => application.vacancy)
   applications: Application[];
 
   @ApiProperty({
     type: () => [VacancySkill],
-    description: 'Required Skills of Vacancies',
+    description: "Required Skills of Vacancies",
   })
   @OneToMany(() => VacancySkill, (skill) => skill.vacancy)
   vacancySkills: VacancySkill[];
