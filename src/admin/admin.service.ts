@@ -32,12 +32,12 @@ export class AdminService {
       throw new BadRequestException('Bunday email allaqachon mavjud!');
     }
 
-    const hashed_password = await bcrypt.hash(password, 7);
+    const password_hash = await bcrypt.hash(password, 7);
 
     const newAdmin = await this.adminRepo.save({
       ...otherDto,
       email,
-      hashed_password,
+      password_hash,
       refresh_token: '',
     });
 

@@ -10,13 +10,20 @@ import {
 import { CategoryService } from "./category.service";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
-import { ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from "@nestjs/swagger";
 import { Category } from "./entities/category.entity";
 
+@ApiBearerAuth()
 @Controller("category")
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: "CREATE Category" })
   @ApiResponse({
     status: 200,
@@ -28,6 +35,7 @@ export class CategoryController {
     return this.categoryService.create(createCategoryDto);
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: "GET ALL Category" })
   @ApiResponse({
     status: 200,
@@ -39,6 +47,7 @@ export class CategoryController {
     return this.categoryService.findAll();
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: "GET One Category By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -51,6 +60,7 @@ export class CategoryController {
     return this.categoryService.findOne(+id);
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: "UPDATE Category" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
@@ -66,6 +76,7 @@ export class CategoryController {
     return this.categoryService.update(+id, updateCategoryDto);
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: "DELETE Category" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({

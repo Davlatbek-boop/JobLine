@@ -77,8 +77,7 @@ export class SeekerAuthService {
 
     res.cookie('heshed_refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: Number(process.env.COOKIE_TIME),
+      maxAge: Number(process.env.REFRESH_COOKIE_TIME),
     });
 
     return {
@@ -159,8 +158,7 @@ export class SeekerAuthService {
 
     res.cookie('heshed_refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: Number(process.env.COOKIE_TIME),
+      maxAge: Number(process.env.REFRESH_COOKIE_TIME),
     });
 
     return {

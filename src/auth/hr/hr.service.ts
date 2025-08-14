@@ -27,7 +27,7 @@ export class HrAuthService {
       email: hr.email,
       role: hr.role,
       is_active: hr.is_active,
-      company_id: hr.company_id,
+      company_id: hr.companyId,
     };
 
     const [accessToken, refreshToken] = await Promise.all([

@@ -39,7 +39,7 @@ export class CreateSeekerDto {
   email: string;
 
   @ApiProperty({
-    example: 'StrongPassword123!',
+    example: 'Uzbek1st@n',
     description: 'Password of the job seeker',
   })
   @IsString()

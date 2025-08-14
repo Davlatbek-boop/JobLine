@@ -28,12 +28,12 @@ export class Admin {
   @Column()
   password_hash: string;
 
-  @ApiProperty({ example: 'true' })
+  @ApiProperty({ example: 'false' })
   @Column({ default: false })
   is_creator: string;
 
   @ApiProperty({
-    example: 'false',
+    example: 'true',
     description: 'Faqat "true" yoki "false" bo‘lishi mumkin',
   })
   @Column({ nullable: true, default: 'true' }) // Bazada default 'true'

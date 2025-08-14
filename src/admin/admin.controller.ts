@@ -8,7 +8,7 @@ import {
   Delete,
   NotFoundException,
   UseGuards,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
@@ -16,33 +16,40 @@ import {
   ApiParam,
   ApiBody,
   ApiBearerAuth,
-} from '@nestjs/swagger';
-import { AdminService } from './admin.service';
-import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
-import { Admin } from './entities/admin.entity';
-import { UpdateAdminPasswordDto } from './dto/update_password';
+} from "@nestjs/swagger";
+import { AdminService } from "./admin.service";
+import { CreateAdminDto } from "./dto/create-admin.dto";
+import { UpdateAdminDto } from "./dto/update-admin.dto";
+import { Admin } from "./entities/admin.entity";
+import { UpdateAdminPasswordDto } from "./dto/update_password";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { CreatorGuard } from "../common/guards/creator.guard";
+import { AdminSelfGuard } from "../common/guards/admin-self.guard";
 
-@ApiBearerAuth('access-token')
-@ApiTags('admin')
-@Controller('admin')
+@ApiBearerAuth("access-token")
+@ApiTags("admin")
+@Controller("admin")
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, CreatorGuard)
   @Post()
-  @ApiOperation({ summary: 'Yangi admin yaratish' })
+  @ApiOperation({ summary: "Yangi admin yaratish" })
   @ApiBody({ type: CreateAdminDto })
   @ApiResponse({
     status: 201,
-    description: 'Admin muvaffaqiyatli yaratildi.',
+    description: "Admin muvaffaqiyatli yaratildi.",
     type: Admin,
   })
   create(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.create(createAdminDto);
   }
 
+  @ApiBearerAuth()
+  // @UseGuards(AuthGuard, SupperAdminGuard)
   @Get()
-  @ApiOperation({ summary: 'Barcha adminlarni olish' })
+  @ApiOperation({ summary: "Barcha adminlarni olish" })
   @ApiResponse({ status: 200, description: "Adminlar ro'yxati", type: [Admin] })
   findAll() {
     return this.adminService.findAll();
@@ -63,60 +70,64 @@ export class AdminController {
   //   return { message: 'Profil muvaffaqiyatli faollashtirildi!' };
   // }
 
-  @Get(':id')
+  @Get(":id")
   @ApiOperation({ summary: "ID bo'yicha adminni olish" })
-  @ApiParam({ name: 'id', description: 'Admin ID', type: Number })
-  @ApiResponse({ status: 200, description: 'Admin topildi', type: Admin })
-  @ApiResponse({ status: 404, description: 'Admin topilmadi' })
-  findOne(@Param('id') id: string) {
+  @ApiParam({ name: "id", description: "Admin ID", type: Number })
+  @ApiResponse({ status: 200, description: "Admin topildi", type: Admin })
+  @ApiResponse({ status: 404, description: "Admin topilmadi" })
+  findOne(@Param("id") id: string) {
     return this.adminService.findOne(+id);
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'Adminni yangilash' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminSelfGuard)
+  @Patch(":id")
+  @ApiOperation({ summary: "Adminni yangilash" })
   @ApiParam({
-    name: 'id',
-    description: 'Yangilanadigan admin ID',
+    name: "id",
+    description: "Yangilanadigan admin ID",
     type: Number,
   })
   @ApiBody({ type: UpdateAdminDto })
-  @ApiResponse({ status: 200, description: 'Admin yangilandi', type: Admin })
-  @ApiResponse({ status: 404, description: 'Admin topilmadi' })
-  update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
+  @ApiResponse({ status: 200, description: "Admin yangilandi", type: Admin })
+  @ApiResponse({ status: 404, description: "Admin topilmadi" })
+  update(@Param("id") id: string, @Body() updateAdminDto: UpdateAdminDto) {
     return this.adminService.update(+id, updateAdminDto);
   }
 
-  @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, CreatorGuard)
+  @Delete(":id")
   @ApiOperation({ summary: "Adminni o'chirish" })
   @ApiParam({
-    name: 'id',
+    name: "id",
     description: "O'chiriladigan admin ID",
     type: Number,
   })
   @ApiResponse({ status: 200, description: "Admin o'chirildi" })
-  @ApiResponse({ status: 404, description: 'Admin topilmadi' })
-  remove(@Param('id') id: string) {
+  @ApiResponse({ status: 404, description: "Admin topilmadi" })
+  remove(@Param("id") id: string) {
     return this.adminService.remove(+id);
   }
 
-  @Patch(':id/password')
-    @ApiOperation({ summary: 'Foydalanuvchi parolini yangilash' })
-    @ApiParam({ name: 'id', type: Number })
-    // @ApiBody({ type: UpdateAdminPasswordDto })
-    @ApiResponse({ status: 200, description: 'Parol muvaffaqiyatli yangilandi' })
-    async updatePassword(
-      @Param('id') id: number,
-      @Body() dto: UpdateAdminPasswordDto,
-    ): Promise<{ message: string }> {
-      const result = await this.adminService.updatePassword(id, dto);
-      return { message: result };
-    }
-  
-    // @Get('activate/:link')
-    // @ApiOperation({ summary: 'Foydalanuvchini aktivlashtirish' })
-    // @ApiParam({ name: 'link', type: String })
-    // @ApiResponse({ status: 200, description: 'Foydalanuvchi aktivlashtirildi' })
-    // activate(@Param('link') link: string) {
-    //   return this.adminService.activate(link);
-    // }
+  @Patch(":id/password")
+  @ApiOperation({ summary: "Foydalanuvchi parolini yangilash" })
+  @ApiParam({ name: "id", type: Number })
+  // @ApiBody({ type: UpdateAdminPasswordDto })
+  @ApiResponse({ status: 200, description: "Parol muvaffaqiyatli yangilandi" })
+  async updatePassword(
+    @Param("id") id: number,
+    @Body() dto: UpdateAdminPasswordDto
+  ): Promise<{ message: string }> {
+    const result = await this.adminService.updatePassword(id, dto);
+    return { message: result };
+  }
+
+  // @Get('activate/:link')
+  // @ApiOperation({ summary: 'Foydalanuvchini aktivlashtirish' })
+  // @ApiParam({ name: 'link', type: String })
+  // @ApiResponse({ status: 200, description: 'Foydalanuvchi aktivlashtirildi' })
+  // activate(@Param('link') link: string) {
+  //   return this.adminService.activate(link);
+  // }
 }

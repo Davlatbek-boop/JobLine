@@ -39,9 +39,7 @@ export class HrAuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refresh_token = req.cookies['refresh_token'];
-    const hrId = req.body.hrId;
-    return this.hrAuthService.refreshTokenHr(hrId, refresh_token);
+    return this.hrAuthService.refreshTokenHr(req, res);
   }
 
   @Post('signout')

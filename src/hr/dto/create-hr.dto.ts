@@ -38,7 +38,7 @@ export class CreateHrDto {
   email: string;
 
   @ApiProperty({
-    example: 'StrongPassword123!',
+    example: 'Uzbek1st@n',
     description: 'Password (minimum 6 characters)',
   })
   @IsString()
@@ -94,26 +94,18 @@ export class CreateHrDto {
     description: 'ID of the company the HR staff belongs to',
   })
   @IsInt()
-  company_id: number;
+  companyId: number;
 
   @ApiProperty({
-    example: false,
+    example: "hr",
     description: 'Indicates if the HR staff member has admin privileges',
   })
   @IsString()
   role: string;
 
-  @ApiProperty({
-    example: null,
-    description: 'Refresh token (hashed and stored by the system)',
-    required: false,
-  })
-  @IsOptional()
-  @IsString()
-  refresh_token?: string;
 
   @ApiProperty({
-    example: true,
+    example: false,
     description: 'Indicates if the HR staff is currently active',
   })
   @IsBoolean()

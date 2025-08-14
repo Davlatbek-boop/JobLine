@@ -161,7 +161,7 @@ export class AdminAuthService {
     res.cookie('hashed_refresh_token', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
-      maxAge: Number(process.env.COOKIE_TIME),
+      maxAge: Number(process.env.REFRESH_COOKIE_TIME),
     });
 
     return {

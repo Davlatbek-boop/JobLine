@@ -65,7 +65,7 @@ export class Hr {
 
   @ApiProperty({ description: "Company unique ID", example: 2 })
   @Column({nullable:true})
-  company_id: number;
+  companyId: number;
 
   @ApiProperty({ description: "Hr ", example: "hr"})
   @Column({ default: false })
