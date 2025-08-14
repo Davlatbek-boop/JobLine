@@ -6,7 +6,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
+import { Hr } from "../../hr/entities/hr.entity";
+import { Vacancy } from "../../vacancies/entities/vacancy.entity";
 
 @Entity("companies")
 export class Company {
@@ -103,4 +106,10 @@ export class Company {
   })
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(() => Hr, (hr) => hr.company)
+  hr: Hr[];
+
+  @OneToMany(() => Vacancy, (vacancy) => vacancy.company)
+  vacansy: Vacancy[];
 }

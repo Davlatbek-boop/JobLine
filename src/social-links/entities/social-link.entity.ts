@@ -27,5 +27,5 @@ export class SocialLink {
     description: "Social network links of Job seeker",
   })
   @OneToMany(() => SeekerSocialLink, (socialLink) => socialLink.link)
-  socialLink: SocialLink[];
+  seekerSocialLink: SeekerSocialLink[];
 }

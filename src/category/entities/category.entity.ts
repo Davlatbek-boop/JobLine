@@ -55,5 +55,4 @@ export class Category {
   @OneToMany(() => Specialization, (specialization) => specialization.category)
   specialization: Specialization[];
 }
-{
-}
+
