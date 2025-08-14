@@ -10,6 +10,9 @@ import {
 } from "typeorm";
 import { Application } from "../../applications/entities/application.entity";
 import { VacancySkill } from "../../vacancy_skills/entities/vacancy_skill.entity";
+import { Hr } from "../../hr/entities/hr.entity";
+import { Company } from "../../companies/entities/company.entity";
+import { Specialization } from "../../specialization/entities/specialization.entity";
 
 export enum WorkScheduleType {
   "6_1" = "6_1",
