@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateVacancyDto } from "./dto/create-vacancy.dto";
 import { UpdateVacancyDto } from "./dto/update-vacancy.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Vacancy } from "./entities/vacancy.entity";
+import { StatusType, Vacancy } from "./entities/vacancy.entity";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -52,7 +52,7 @@ export class VacanciesService {
       throw new NotFoundException(`Vacancy with ${id} id not found`);
     }
 
-    vacancy.status = "closed";
+    vacancy.status = StatusType.CLOSED;
     await this.vacancyRepo.save(vacancy);
     return { message: `Vacancy with ${id} id closed successfully` };
   }
