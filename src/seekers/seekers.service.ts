@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -9,12 +11,15 @@ import { Seeker } from "./entities/seeker.entity";
 import { CreateSeekerDto } from "./dto/create-seeker.dto";
 import { UpdateSeekerDto } from "./dto/update-seeker.dto";
 import * as bcrypt from "bcrypt";
+import { v4 as uuidv4 } from 'uuid';
+import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class SeekersService {
   constructor(
     @InjectRepository(Seeker)
-    private readonly seekerRepository: Repository<Seeker>
+    private readonly seekerRepository: Repository<Seeker>,
+    private readonly mailService: MailService
   ) {}
 
   async updateRefreshToken(id: number, hashed_refresh_token: string) {
@@ -41,17 +46,38 @@ export class SeekersService {
     return null;
   }
 
-  async create(createSeekerDto: CreateSeekerDto): Promise<Seeker> {
-    const candidate = await this.findSeekerByEmail(createSeekerDto.email);
-    if (candidate) {
-      throw new ConflictException("Bunday foydalanuvchi mavjud");
-    }
+  async create(createSeekerDto: CreateSeekerDto) {
+  const { password_hash, email, ...otherDto } = createSeekerDto;
 
-    const hashedPassword = await bcrypt.hash(createSeekerDto.password_hash, 7);
-    createSeekerDto.password_hash = hashedPassword;
-
-    return this.seekerRepository.save(createSeekerDto);
+  // Email tekshirish
+  const existingSeeker = await this.seekerRepository.findOne({ where: { email } });
+  if (existingSeeker) {
+    throw new BadRequestException('Bunday email allaqachon mavjud!');
   }
+
+  // Parolni hash qilish
+  const hashedPassword = await bcrypt.hash(password_hash, 10);
+
+  // Aktivatsiya linki
+  const activationLink = uuidv4();
+
+  const newSeeker = await this.seekerRepository.save({
+    ...otherDto,
+    email,
+    password_hash: hashedPassword, // <-- BU joy muhim!
+    activate_link: activationLink, // agar DB’da `activate_link` bo‘lsa
+  });
+
+  try {
+    await this.mailService.sendSeekerMail(newSeeker);
+  } catch (error) {
+    console.error('Email yuborishda xatolik:', error.message);
+    throw new ServiceUnavailableException('Emailga xat yuborishda xatolik');
+  }
+
+  return newSeeker;
+}
+
   
   async findAll(): Promise<Seeker[]> {
     return this.seekerRepository.find();
@@ -75,4 +101,32 @@ export class SeekersService {
     const seeker = await this.findOne(id);
     await this.seekerRepository.remove(seeker);
   }
+
+  async findAdminByActivationLink(link: string): Promise<Seeker | null> {
+      return await this.seekerRepository.findOne({ where: {  activate_link: link } });
+    }
+  
+    async activateSeeker(link: string) {
+      if (!link) {
+        throw new BadRequestException('Activation link jo‘natilmadi!');
+      }
+      const seeker = await this.seekerRepository.findOne({
+        where: {  activate_link: link },
+      });
+  
+      if (!seeker) {
+        throw new NotFoundException('Aktivatsiya linki notogri!');
+      }
+      if (seeker.is_active) {
+        throw new BadRequestException('Allaqachon faollashtirilgan');
+      }
+      seeker.is_active = true;
+      seeker. activate_link = '';
+  
+      await this.seekerRepository.save(seeker);
+      return {
+        message: 'Profil muvaffaqiyatli faollashtirildi',
+        is_active: seeker.is_active,
+      };
+    }
 }

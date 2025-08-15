@@ -9,6 +9,7 @@ import {
   MaxLength,
   Matches,
   IsUrl,
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateHrDto {
@@ -44,6 +45,15 @@ export class CreateHrDto {
   @IsString()
   @MinLength(6)
   password: string;
+
+  @ApiProperty({
+      example: 'Uzbek1st@n',
+      description: 'Password confirmation',
+    })
+    @IsNotEmpty({ message: 'Password confirmation is required' })
+    @IsString()
+    confirm_password: string;
+  
 
   @ApiProperty({
     example: '+998901234567',
@@ -97,7 +107,7 @@ export class CreateHrDto {
   companyId: number;
 
   @ApiProperty({
-    example: "hr",
+    example: false,
     description: 'Indicates if the HR staff member has admin privileges',
   })
   @IsString()
