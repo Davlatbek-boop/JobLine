@@ -3,12 +3,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Application } from "../../applications/entities/application.entity";
 import { VacancySkill } from "../../vacancy_skills/entities/vacancy_skill.entity";
+import { Hr } from "../../hr/entities/hr.entity";
+import { Company } from "../../companies/entities/company.entity";
+import { Specialization } from "../../specialization/entities/specialization.entity";
 
 export enum WorkScheduleType {
   "6_1" = "6_1",
@@ -50,6 +54,7 @@ export enum RequiredEducationType {
   MASTER = "master",
   PHD = "phd",
 }
+
 
 export enum StatusType {
   DRAFT = "draft",
@@ -297,29 +302,29 @@ export class Vacancy {
   })
   @UpdateDateColumn({ type: "timestamp", nullable: true })
   updated_at?: Date;
-  // @ApiProperty({
-  //   type: () => Hr,
-  //   description: "Hr info",
-  //   example: "1",
-  // })
-  // @ManyToOne(() => Hr, (hr) => hr.vacancies)
-  // hr: Hr;
+  @ApiProperty({
+    type: () => Hr,
+    description: "Hr info",
+    example: "1",
+  })
+  @ManyToOne(() => Hr, (hr) => hr.vacancy)
+  hr: Hr;
 
-  // @ApiProperty({
-  //   type: () => Company,
-  //   description: "Company info",
-  //   example: "1",
-  // })
-  // @ManyToOne(() => Company, (hr) => hr.vacancies)
-  // company: Company;
+  @ApiProperty({
+    type: () => Company,
+    description: "Company info",
+    example: "1",
+  })
+  @ManyToOne(() => Company, (hr) => hr.vacansy)
+  company: Company;
 
-  // @ApiProperty({
-  //   type: () => Specialization,
-  //   description: "Specialization info",
-  //   example: "1",
-  // })
-  // @ManyToOne(() => Specialization, (spec) => spec.vacancies)
-  // specialization: Specialization;
+  @ApiProperty({
+    type: () => Specialization,
+    description: "Specialization info",
+    example: "1",
+  })
+  @ManyToOne(() => Specialization, (spec) => spec.vacancy)
+  specialization: Specialization;
 
   @ApiProperty({
     type: () => [Application],

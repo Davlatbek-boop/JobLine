@@ -95,4 +95,13 @@ export class ApplicationsService {
     });
     return { success: true, total, page, limit, data: items };
   }
+
+  async getAllBySeekerId(id: number) {
+    const applications = await this.applicationRepo.find({
+      where: { seeker: { id } },
+      relations: ["seeker"],
+    });
+
+    return applications;
+  }
 }

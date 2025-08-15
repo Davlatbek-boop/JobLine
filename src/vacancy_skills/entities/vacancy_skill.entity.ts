@@ -49,7 +49,6 @@ export class VacancySkill {
   })
   priority?: PriorityType;
 
-  // ==========================
   @ApiProperty({
     type: () => Vacancy,
     description: "Vacancy info",

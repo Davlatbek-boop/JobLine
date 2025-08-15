@@ -12,6 +12,8 @@ import { Category } from "../../category/entities/category.entity";
 import { Skill } from "../../skills/entities/skill.entity";
 import { Education } from "../../education/entities/education.entity";
 import { ApiProperty } from "@nestjs/swagger";
+import { Vacancy } from "../../vacancies/entities/vacancy.entity";
+import { WorkExperience } from "../../work-experience/entities/work-experience.entity";
 
 @Entity()
 export class Specialization {
@@ -36,7 +38,6 @@ export class Specialization {
   @ApiProperty({ description: "Active Vacancies count", example: 1 })
   @Column({ nullable: true })
   active_vacancies_count: number;
-
 
   @ApiProperty({ description: "Is tis Specialization active", example: true })
   @Column({ default: true })
@@ -81,4 +82,21 @@ export class Specialization {
     onDelete: "CASCADE",
   })
   education: Education[];
+
+  @ApiProperty({
+    type: () => [Vacancy],
+    description: "Vacancy of Specialization",
+  })
+  @OneToMany(() => Vacancy, (vacancy) => vacancy.specialization)
+  vacancy: Vacancy[];
+
+  @ApiProperty({
+    type: () => [WorkExperience],
+    description: "Work Experience of Specialization",
+  })
+  @OneToMany(
+    () => WorkExperience,
+    (workExperience) => workExperience.specialization
+  )
+  workExperience: WorkExperience[];
 }

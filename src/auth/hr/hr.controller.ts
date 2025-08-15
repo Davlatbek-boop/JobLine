@@ -1,42 +1,53 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
-  Delete,
+  Controller,
+  Post,
+  Req,
+  Res,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
-import { HrService } from '../../hr/hr.service';
+import { Request, Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
+import { SignInDto } from '../dto/sign-in.dto';
 import { CreateHrDto } from '../../hr/dto/create-hr.dto';
-import { UpdateHrDto } from '../../hr/dto/update-hr.dto';
+import { HrAuthService } from './hr.service';
 
-@Controller('hr')
-export class HrController {
-  constructor(private readonly hrService: HrService) {}
+@ApiTags('HR Authentication')
+@Controller('auth/hr')
+export class HrAuthController {
+  constructor(private readonly hrAuthService: HrAuthService) {}
 
-  @Post()
-  create(@Body() createHrDto: CreateHrDto) {
-    return this.hrService.create(createHrDto);
+  @Post('signup')
+  @HttpCode(HttpStatus.CREATED)
+  async signUp(@Body() createHrDto: CreateHrDto) {
+    return this.hrAuthService.signUpHr(createHrDto);
   }
 
-  @Get()
-  findAll() {
-    return this.hrService.findAll();
+  @Post('signin')
+  @HttpCode(HttpStatus.OK)
+  async signIn(
+    @Body() signInDto: SignInDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.hrAuthService.signInHr(signInDto, res);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.hrService.findOne(+id);
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refreshToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.hrAuthService.refreshTokenHr(req, res);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHrDto: UpdateHrDto) {
-    return this.hrService.update(+id, updateHrDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.hrService.remove(+id);
+  @Post('signout')
+  @HttpCode(HttpStatus.OK)
+  async signOut(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.hrAuthService.signOutHr(req, res);
   }
 }

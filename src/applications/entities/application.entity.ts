@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Vacancy } from "../../vacancies/entities/vacancy.entity";
+import { Seeker } from "../../seekers/entities/seeker.entity";
 
 export enum ApplicationStatusType {
   PENDING = "pending",
@@ -96,13 +97,13 @@ export class Application {
   updated_at?: Date;
   //========================
 
-  //   @ApiProperty({
-  //     type: () => Seeker,
-  //     description: 'Seeker info',
-  //     example: '1',
-  //   })
-  //   @ManyToOne(() => Seeker, (seeker) => seeker.applications)
-  //   seeker: Seeker;
+  @ApiProperty({
+    type: () => Seeker,
+    description: "Seeker info",
+    example: "1",
+  })
+  @ManyToOne(() => Seeker, (seeker) => seeker.applications)
+  seeker: Seeker;
 
   @ApiProperty({
     type: () => Vacancy,
@@ -111,12 +112,4 @@ export class Application {
   })
   @ManyToOne(() => Vacancy, (vacancy) => vacancy.applications)
   vacancy: Vacancy;
-
-  // O'chirishim kerak
-  // @ApiProperty({
-  //   type: () => [VacancySkill],
-  //   description: 'Required Skill of Vacancies',
-  // })
-  // @OneToMany(() => VacancySkill, (skill) => skill.vacancy)
-  // vacancySkills: VacancySkill[];
 }

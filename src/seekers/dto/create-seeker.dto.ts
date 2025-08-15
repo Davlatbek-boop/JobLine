@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsEmail,
@@ -6,134 +7,202 @@ import {
   IsDateString,
   IsNumber,
   IsBoolean,
-  IsJSON,
   IsUrl,
   IsObject,
-} from "class-validator";
-import { Gender, Status, PreferredWorkForm } from "../entities/seeker.entity";
-import { ApiProperty } from "@nestjs/swagger";
+} from 'class-validator';
+import { Gender, Status, PreferredWorkForm } from '../entities/seeker.entity';
 
 export class CreateSeekerDto {
-  @ApiProperty({ description: "Job seeker name", example: "Olim" })
+  @ApiProperty({
+    example: 'John',
+    description: 'First name of the job seeker',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   first_name?: string;
 
-  @ApiProperty({ description: "Job seeker surname", example: "Nodirov" })
+  @ApiProperty({
+    example: 'Doe',
+    description: 'Last name of the job seeker',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   last_name?: string;
 
   @ApiProperty({
-    description: "Job seeker eamil",
-    example: "example@gmail.com",
+    example: 'john.doe@example.com',
+    description: 'Email address of the job seeker',
   })
   @IsEmail()
   email: string;
 
-  @ApiProperty({ description: "Password", example: "Passw0rd123!" })
+  @ApiProperty({
+    example: 'Uzbek1st@n',
+    description: 'Password of the job seeker',
+  })
   @IsString()
   password_hash: string;
 
   @ApiProperty({
-    description: "Job seeker phone number",
-    example: "+998993330000",
+    example: '+998901234567',
+    description: 'Phone number of the job seeker',
+    required: false,
   })
   @IsOptional()
   @IsString()
   phone_number?: string;
 
-  @ApiProperty({ description: "Date of birth", example: "2000-02-03" })
+  @ApiProperty({
+    example: '1995-08-14',
+    description: 'Birth date in YYYY-MM-DD format',
+    required: false,
+  })
   @IsOptional()
   @IsDateString()
   birth_date?: string;
 
-  @ApiProperty({ description: "Gender", example: Gender.MALE })
+  @ApiProperty({
+    description: 'Gender of the job seeker',
+    enum: Gender,
+    required: false,
+  })
   @IsOptional()
   @IsEnum(Gender)
   gender?: Gender;
 
-  @ApiProperty({ description: "Address", example: "20-01-15" })
+  @ApiProperty({
+    example: '123 Main Street',
+    description: 'Street address',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   address?: string;
 
-  @ApiProperty({ description: "City name", example: "Tashkent" })
+  @ApiProperty({
+    example: 'Tashkent',
+    description: 'City name',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   city?: string;
 
-  @ApiProperty({ description: "Country name", example: "Chilonzor" })
+  @ApiProperty({
+    example: 'Uzbekistan',
+    description: 'Country name',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   country?: string;
 
-  @ApiProperty({ description: "Description", example: "Intelligent, sociable" })
+  @ApiProperty({
+    example: 'Experienced web developer',
+    description: 'Brief description or bio',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   description?: string;
 
   @ApiProperty({
-    description: "Job seeker image link",
-    example: "https://example.com/image",
+    example: 'https://example.com/photo.jpg',
+    description: 'Profile image URL',
+    required: false,
   })
   @IsOptional()
   @IsUrl()
   img_url?: string;
 
   @ApiProperty({
-    description: "Job seeker social media link unique ID",
     example: 1,
+    description: 'ID linking to seeker’s social links',
+    required: false,
   })
   @IsOptional()
   @IsNumber()
   social_links_id?: number;
 
-  @ApiProperty({ description: "languages", example: "en, ru, uz" })
+  @ApiProperty({
+    example: { English: 'Fluent', Russian: 'Intermediate' },
+    description: 'Languages and proficiency levels',
+    required: false,
+  })
   @IsOptional()
   @IsObject()
   languages?: any;
 
-  @ApiProperty({ description: "Resume file", example: "Resume file" })
+  @ApiProperty({
+    example: 'https://example.com/resume.pdf',
+    description: 'Resume file URL',
+    required: false,
+  })
   @IsOptional()
   @IsUrl()
   resume_file?: string;
 
-  @ApiProperty({ description: "Expected minimum salary", example: 300 })
+  @ApiProperty({
+    example: 500,
+    description: 'Minimum expected salary',
+    required: false,
+  })
   @IsOptional()
   @IsNumber()
   expected_salary_min?: number;
 
-  @ApiProperty({ description: "Expected miximum salary", example: 4000 })
+  @ApiProperty({
+    example: 1000,
+    description: 'Maximum expected salary',
+    required: false,
+  })
   @IsOptional()
   @IsNumber()
   expected_salary_max?: number;
 
   @ApiProperty({
-    description: "Preferred work format",
-    example: PreferredWorkForm.HYBRID,
+    description: 'Preferred work format',
+    enum: PreferredWorkForm,
+    required: false,
   })
   @IsOptional()
   @IsEnum(PreferredWorkForm)
   preferred_work_form?: PreferredWorkForm;
 
   @ApiProperty({
-    description: "Preferred location to work",
-    example: "Coffee station",
+    example: { country: 'Uzbekistan', city: 'Tashkent' },
+    description: 'Preferred job locations',
+    required: false,
   })
   @IsOptional()
   @IsObject()
   preferred_locations?: any;
 
   @ApiProperty({
-    description: "Job seeker status",
-    example: Status.ACTIVE,
+    description: 'Current status of the job seeker',
+    enum: Status,
+    required: false,
   })
   @IsOptional()
   @IsEnum(Status)
   status?: Status;
 
-  @ApiProperty({ description: "Is Job seeker at work or not ?", example: true })
+  @ApiProperty({
+    example: null,
+    description: 'Refresh token used for authentication',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  refresh_token?: string;
+
+  @ApiProperty({
+    example: true,
+    description: 'Indicates if the seeker’s account is active',
+    required: false,
+  })
   @IsOptional()
   @IsBoolean()
   is_active?: boolean;

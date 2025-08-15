@@ -11,6 +11,8 @@ import { WorkExperience } from "../../work-experience/entities/work-experience.e
 import { Education } from "../../education/entities/education.entity";
 import { SeekerSkill } from "../../seeker-skills/entities/seeker-skill.entity";
 import { ApiProperty } from "@nestjs/swagger";
+import { Application } from "../../applications/entities/application.entity";
+import { SeekerSocialLink } from "../../seeker-social-link/entities/seeker-social-link.entity";
 
 export enum Gender {
   MALE = "male",
@@ -140,12 +142,9 @@ export class Seeker {
   @Column({ type: "enum", enum: Status, default: Status.ACTIVE })
   status: Status;
 
-  @ApiProperty({
-    description: "  Job seeker token key to use site in his/her corner",
-    example: "jcu2v48dkcbh8237",
-  })
-  @Column({ type: "varchar", nullable: true })
-  refresh_token: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  hashed_refresh_token: string;
 
   @ApiProperty({ description: "Is Job seeker at work or not ?", example: true })
   @Column({ type: "boolean", default: true })
@@ -185,4 +184,16 @@ export class Seeker {
   })
   @OneToMany(() => SeekerSkill, (skill) => skill.skill)
   skill: SeekerSkill[];
+
+
+  @OneToMany(() => Application, (application) => application.seeker)
+  applications: Application[];
+
+
+   @ApiProperty({
+    type: () => [SeekerSocialLink],
+    description: "List of seekerSocialLink",
+  })
+  @OneToMany(() => SeekerSocialLink, (seekerSocialLink) => seekerSocialLink.seeker)
+  seekerSocialLink: SeekerSocialLink[];
 }

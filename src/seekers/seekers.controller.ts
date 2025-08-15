@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { SeekersService } from './seekers.service';
 import { CreateSeekerDto } from './dto/create-seeker.dto';
 import { UpdateSeekerDto } from './dto/update-seeker.dto';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { Seeker } from './entities/seeker.entity';
+import { AuthGuard } from '../common/guards/auth.guard';
+import { AdminGuard } from '../common/guards/admin.guard';
+import { SeekerSelfGuard } from '../common/guards/seeker-self.guard';
 
 @Controller("seekers")
 export class SeekersController {
@@ -20,6 +23,8 @@ export class SeekersController {
     return this.seekersService.create(createSeekerDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "GET ALL Seekers" })
   @ApiResponse({
     status: 200,
@@ -31,6 +36,9 @@ export class SeekersController {
     return this.seekersService.findAll();
   }
 
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, SeekerSelfGuard)
   @ApiOperation({ summary: "GET One Seeker By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -43,6 +51,8 @@ export class SeekersController {
     return this.seekersService.findOne(+id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, SeekerSelfGuard)
   @ApiOperation({ summary: "UPDATE Seeker" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
@@ -55,6 +65,8 @@ export class SeekersController {
     return this.seekersService.update(+id, updateSeekerDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "DELETE Seeker" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({

@@ -60,7 +60,7 @@ export class SeekerSkill {
     description: "Skill info",
     example: "1",
   })
-  @ManyToOne(() => Skill, (skill) => skill.id, { onDelete: "CASCADE" })
+  @ManyToOne(() => Skill, (skill) => skill.seekerSkill, { onDelete: "CASCADE" })
   @JoinColumn({ name: "skill_id" })
   skill: Skill;
 }

@@ -5,7 +5,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
 } from 'typeorm';
+import { Company } from '../../companies/entities/company.entity';
+import { Vacancy } from '../../vacancies/entities/vacancy.entity';
 
 export enum HrRole {
   Hr = 'hr',
@@ -61,18 +65,18 @@ export class Hr {
 
   @ApiProperty({ description: "Company unique ID", example: 2 })
   @Column({nullable:true})
-  company_id: number;
+  companyId: number;
 
-  @ApiProperty({ description: "Hr role", example: true })
+  @ApiProperty({ description: "Hr ", example: "hr"})
   @Column({ default: false })
-  role: boolean;
+  role: string;
 
   @ApiProperty({
     description: "Hr token key to use site in his/her corner",
     example: "jcu2v48dkcbh8237",
   })
   @Column({ nullable: true })
-  refresh_token: string;
+  hashed_refresh_token: string;
 
   @ApiProperty({ description: "Is Hr at work or not ?", example: true })
   @Column({ default: true })
@@ -91,4 +95,11 @@ export class Hr {
   })
   @UpdateDateColumn()
   updated_at: Date;
+
+
+  @ManyToOne(()=> Company, (company)=> company.hr)
+  company: Company
+
+  @OneToMany(()=> Vacancy, (vacancies)=> vacancies.hr)
+  vacancy: Vacancy[]
 }

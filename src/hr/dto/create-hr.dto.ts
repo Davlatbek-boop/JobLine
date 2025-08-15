@@ -12,66 +12,102 @@ import {
 } from 'class-validator';
 
 export class CreateHrDto {
-  @ApiProperty({ description: "Hr name", example: "Zokir" })
+  @ApiProperty({
+    example: 'John',
+    description: 'First name of the HR staff member (2–50 characters)',
+  })
   @IsString()
   @MinLength(2)
   @MaxLength(50)
   first_name: string;
 
-  @ApiProperty({ description: "Hr surname", example: "Bohodirov" })
+  @ApiProperty({
+    example: 'Doe',
+    description: 'Last name of the HR staff member (2–50 characters)',
+  })
   @IsString()
   @MinLength(2)
   @MaxLength(50)
   last_name: string;
 
-  @ApiProperty({ description: "Hr eamil", example: "example@gmail.com" })
+  @ApiProperty({
+    example: 'john.doe@example.com',
+    description: 'Unique email address of the HR staff member',
+  })
   @IsEmail()
   email: string;
 
-  @ApiProperty({ description: "Password", example: "Passw0rd123!" })
+  @ApiProperty({
+    example: 'Uzbek1st@n',
+    description: 'Password (minimum 6 characters)',
+  })
   @IsString()
   @MinLength(6)
   password: string;
 
-  @ApiProperty({ description: "Hr phone number", example: "+998900099889" })
+  @ApiProperty({
+    example: '+998901234567',
+    description: 'Phone number in Uzbekistan format, must match +998xxxxxxxxx',
+  })
   @IsString()
   @Matches(/^\+998\d{9}$/, {
-    message: "Phone number must be in format +998xxxxxxxxx",
+    message: 'Phone number must be in format +998xxxxxxxxx',
   })
   phone_number: string;
 
-  @ApiProperty({ description: "Hr position", example: "main" })
+  @ApiProperty({
+    example: 'HR Manager',
+    description: 'Position or job title (max 100 characters)',
+  })
   @IsString()
   @MaxLength(100)
   position: string;
 
-  @ApiProperty({ description: "Branch name", example: "Chilonzor" })
+  @ApiProperty({
+    example: 'Human Resources',
+    description: 'Department name (max 100 characters)',
+  })
   @IsString()
   @MaxLength(100)
   department: string;
 
-  @ApiProperty({ description: "About Hr", example: "Colm" })
+  @ApiProperty({
+    example: 'Responsible for recruitment and onboarding processes',
+    description: 'Brief description of the HR staff member',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   description?: string;
 
   @ApiProperty({
-    description: "Hr image link",
-    example: "https://example.com/image",
+    example: 'https://example.com/uploads/profile.jpg',
+    description: 'Profile image URL',
+    required: false,
   })
   @IsOptional()
   @IsUrl()
   img_url?: string;
 
-  @ApiProperty({ description: "Hr Company unique ID", example: 2 })
+  @ApiProperty({
+    example: 5,
+    description: 'ID of the company the HR staff belongs to',
+  })
   @IsInt()
-  company_id: number;
+  companyId: number;
 
-  @ApiProperty({ description: "Hr role", example: true })
-  @IsBoolean()
-  role: boolean;
+  @ApiProperty({
+    example: "hr",
+    description: 'Indicates if the HR staff member has admin privileges',
+  })
+  @IsString()
+  role: string;
 
-  @ApiProperty({ description: "Is Hr at work or not ?", example: true })
+
+  @ApiProperty({
+    example: false,
+    description: 'Indicates if the HR staff is currently active',
+  })
   @IsBoolean()
   is_active: boolean;
 }

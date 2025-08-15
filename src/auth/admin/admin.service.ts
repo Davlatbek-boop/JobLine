@@ -1,10 +1,9 @@
 import {
-  BadGatewayException,
   BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Admin } from '../../admin/entities/admin.entity';
@@ -24,8 +23,10 @@ export class AdminAuthService {
   async AdmingenerateToken(admin: Admin) {
     const payload = {
       id: admin.id,
+      email: admin.email,
       is_active: admin.is_active,
       is_creator: admin.is_creator,
+      role: "admin"
     };
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
@@ -66,17 +67,17 @@ export class AdminAuthService {
     );
 
     if (!isValidPassword) {
-      throw new BadRequestException('Email yoki passwor hato p ');
+      throw new BadRequestException('Email yoki passwor hato');
     }
     const tokens = await this.AdmingenerateToken(admin);
-    res.cookie('refresh_token', tokens.refreshToken, {
+    res.cookie('hashed_refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      maxAge: Number(process.env.COOKIE_TIME),
+      maxAge: Number(process.env.REFRESH_COOKIE_TIME),
     });
 
     try {
       const hashed_refresh_token = await bcrypt.hash(tokens.refreshToken, 7);
-      admin.refresh_token = hashed_refresh_token;
+      admin.hashed_refresh_token = hashed_refresh_token;
       await this.adminService.update(admin.id, admin);
     } catch (error) {
       console.log('Token da xatolik !?!');
@@ -89,54 +90,84 @@ export class AdminAuthService {
   }
 
   async signOutAdmin(req: Request, res: Response) {
-    const refresh_token = req.cookies.refresh_token;
+    const cookieRefresh = req.cookies['hashed_refresh_token'];
 
-    const admin = await this.adminService.findAdminByRefresh(refresh_token);
-
-    if (!admin) {
-      throw new BadGatewayException("Token yoq yoki noto'g'ri");
+    if (!cookieRefresh) {
+      throw new UnauthorizedException('Cookie da refresh token topilmadi');
     }
-    admin.refresh_token = '';
-    await this.adminService.update(admin.id, admin);
 
-    res.clearCookie('refresh_token');
+    let payload: any;
+    try {
+      payload = await this.jwtService.verify(cookieRefresh, {
+        secret: process.env.REFRESH_TOKEN_KEY, // .env ichida bo‘lishi kerak
+      });
+    } catch (err) {
+      throw new UnauthorizedException(
+        'Refresh token yaroqsiz yoki muddati tugagan',
+      );
+    }
 
-    return { message: "Siz endi yo'q siz !?" };
+    const admin = await this.adminService.findAdminByEmail(payload.email);
+
+    if (
+      !admin ||
+      !(await bcrypt.compare(cookieRefresh, admin.hashed_refresh_token))
+    ) {
+      throw new BadRequestException(
+        'Bunday refresh tokenli admin topilmadi yoki token mos emas',
+      );
+    }
+
+    await this.adminService.clearRefreshToken(admin.id);
+
+    res.clearCookie('hashed_refresh_token', { httpOnly: true, secure: true });
+
+    return { message: 'Admin logout' };
   }
 
-  async refreshToken(adminId: number, refresh_token: string, res: Response) {
-    const decodeToken = await this.jwtService.decode(refresh_token);
-
-    if (adminId !== decodeToken['id']) {
-      throw new ForbiddenException('Ruxsat etilmagan');
-    }
-    const admin = await this.adminService.findOne(adminId);
-
-    // console.log('Hashed token:', staff?.hashed_refresh_token);
-
-    if (!admin || !admin.refresh_token) {
-      throw new NotFoundException('Admin not found');
+  async refreshTokenAdmin(req: Request, res: Response) {
+    const admin_refresh_token = req.cookies['hashed_refresh_token'];
+    if (!admin_refresh_token) {
+      throw new ForbiddenException("Refresh token yo'q");
     }
 
-    const tokenMatch = await bcrypt.compare(refresh_token, admin.refresh_token);
-
-    if (!tokenMatch) {
-      throw new ForbiddenException('Forbidden');
+    let payload: any;
+    try {
+      payload = await this.jwtService.verify(admin_refresh_token, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+      });
+    } catch {
+      throw new ForbiddenException(
+        'Refresh token yaroqsiz yoki muddati tugagan',
+      );
     }
-    const { accessToken, refreshToken } = await this.AdmingenerateToken(admin);
 
-    const hashed_refresh_token = await bcrypt.hash(refreshToken, 7);
+    const admin = await this.adminService.findAdminByEmail(payload.email);
+    if (!admin) {
+      throw new ForbiddenException('Bunday foydalanuvchi topilmadi');
+    }
+
+    const isMatch = await bcrypt.compare(
+      admin_refresh_token,
+      admin.hashed_refresh_token,
+    );
+    if (!isMatch) {
+      throw new ForbiddenException("Refresh token noto'g'ri");
+    }
+
+    const tokens = await this.AdmingenerateToken(admin);
+    const hashed_refresh_token = await bcrypt.hash(tokens.refreshToken, 7);
     await this.adminService.updateRefreshToken(admin.id, hashed_refresh_token);
 
-    res.cookie('refresh_token', refreshToken, {
-      maxAge: Number(process.env.REFRESH_COOKIE_TIME),
+    res.cookie('hashed_refresh_token', tokens.refreshToken, {
       httpOnly: true,
+      secure: true,
+      maxAge: Number(process.env.REFRESH_COOKIE_TIME),
     });
-    const respnose = {
-      message: 'Admin refreshed',
-      patientId: admin.id,
-      access_token: accessToken,
+
+    return {
+      message: "Token o'zgardi",
+      accessToken: tokens.accessToken,
     };
-    return respnose;
   }
 }

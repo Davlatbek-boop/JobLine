@@ -10,17 +10,23 @@ import {
   ParseIntPipe,
   DefaultValuePipe,
   BadRequestException,
+  UseGuards,
 } from "@nestjs/common";
 import { ApplicationsService } from "./applications.service";
 import { CreateApplicationDto } from "./dto/create-application.dto";
 import { UpdateApplicationDto } from "./dto/update-application.dto";
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
 import { Application, ApplicationStatusType } from "./entities/application.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
 
+@ApiBearerAuth()
 @Controller("applications")
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
+
+  @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
   @ApiOperation({ summary: "CREATE Application" })
   @ApiResponse({
     status: 200,
@@ -32,6 +38,8 @@ export class ApplicationsController {
     return this.applicationsService.create(createApplicationDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "GET ALL Applications" })
   @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
   @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
@@ -45,6 +53,8 @@ export class ApplicationsController {
     return this.applicationsService.findAll(Number(page), Number(limit));
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "GET One Application By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -57,6 +67,7 @@ export class ApplicationsController {
     return this.applicationsService.findOne(+id);
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: "UPDATE Application" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
@@ -72,6 +83,7 @@ export class ApplicationsController {
     return this.applicationsService.update(+id, updateApplicationDto);
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: "DELETE Application" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
@@ -84,6 +96,7 @@ export class ApplicationsController {
     return this.applicationsService.remove(+id);
   }
 
+  @ApiBearerAuth()
   // All applications for a vacancy (optional status + pagination)
   @ApiOperation({ summary: "Get all applications for a given vacancy" })
   @ApiParam({ name: "vacancyId", type: Number })
@@ -110,6 +123,7 @@ export class ApplicationsController {
     );
   }
 
+  @ApiBearerAuth()
   // Filter applications by status with pagination
   @ApiOperation({ summary: "Filter applications by status" })
   @ApiQuery({ name: "status", required: true, example: "reviewed" })
@@ -131,5 +145,18 @@ export class ApplicationsController {
       Number(page),
       Number(limit)
     );
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get application by seeker id" })
+  @ApiParam({ name: "id", type: Number })
+  @ApiResponse({
+    status: 200,
+    description: "Get application by seeker id",
+    type: Application,
+  })
+  @Get("by-seeker/:id")
+  getAllBySeekerId(@Param("id") id: string) {
+    return this.applicationsService.getAllBySeekerId(+id);
   }
 }

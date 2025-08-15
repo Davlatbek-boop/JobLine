@@ -1,37 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AdminService } from '../../admin/admin.service';
-import { CreateAdminDto } from '../../admin/dto/create-admin.dto';
-import { UpdateAdminDto } from '../../admin/dto/update-admin.dto';
-// import { AdminService } from './admin.service';
-// import { CreateAdminDto } from './dto/create-admin.dto';
-// import { UpdateAdminDto } from './dto/update-admin.dto';
+import { Body, Controller, Post, Req, Res, HttpCode, HttpStatus } from '@nestjs/common';
+import { Request, Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
+import { AdminAuthService } from './admin.service';
+import { SignInDto } from '../dto/sign-in.dto';
 
-@Controller('admin')
-export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+@ApiTags('Admin Authentication')
+@Controller('auth/admin')
+export class AuthAdminController {
+  constructor(private readonly authAdminService: AdminAuthService) {}
 
-  @Post()
-  create(@Body() createAdminDto: CreateAdminDto) {
-    return this.adminService.create(createAdminDto);
+  @Post('signin')
+  @HttpCode(HttpStatus.OK)
+  async signIn(
+    @Body() signInDto: SignInDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authAdminService.signInAdmin(signInDto, res);
   }
 
-  @Get()
-  findAll() {
-    return this.adminService.findAll();
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async adminRefreshToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authAdminService.refreshTokenAdmin(req, res);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.adminService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-    return this.adminService.update(+id, updateAdminDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.adminService.remove(+id);
+  @Post('signout')
+  @HttpCode(HttpStatus.OK)
+  async signOut(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authAdminService.signOutAdmin(req, res);
   }
 }
