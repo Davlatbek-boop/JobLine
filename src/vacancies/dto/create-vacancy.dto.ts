@@ -217,21 +217,21 @@ export class CreateVacancyDto {
   @IsDateString()
   expires_at?: Date;
 
-  // @ApiProperty({
-  //   description: "Hr info",
-  //   example: "1",
-  // })
-  // hr: Hr;
+  @ApiProperty({
+    description: "Hr info",
+    example: "1",
+  })
+  hrId: number;
 
-  // @ApiProperty({
-  //   description: "Company info",
-  //   example: "1",
-  // })
-  // company: Company;
+  @ApiProperty({
+    description: "Company info",
+    example: "1",
+  })
+  companyId: number;
 
-  // @ApiProperty({
-  //   description: "Specialization info",
-  //   example: "1",
-  // })
-  // specialization: Specialization;
+  @ApiProperty({
+    description: "Specialization info",
+    example: "1",
+  })
+  specializationId: number;
 }

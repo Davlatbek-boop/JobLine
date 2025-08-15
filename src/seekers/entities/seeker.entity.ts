@@ -112,6 +112,7 @@ export class Seeker {
   @ApiProperty({ description: "Resume file", example: "Resume file" })
   @Column({ type: "varchar", nullable: true })
   resume_file: string;
+  
 
   @ApiProperty({ description: "Expected minimum salary", example: 300 })
   @Column({ type: "bigint", nullable: true })
@@ -149,6 +150,10 @@ export class Seeker {
   @ApiProperty({ description: "Is Job seeker at work or not ?", example: true })
   @Column({ type: "boolean", default: true })
   is_active: boolean;
+
+  @ApiProperty({ description: "Resume file", example: "Resume file" })
+  @Column({ type: "varchar", nullable: true })
+  activate_link: string;
 
   @ApiProperty({
     description: "Job seeker added date",

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -13,16 +14,21 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from "@nestjs/swagger";
 import { SkillsService } from "./skills.service";
 import { CreateSkillDto } from "./dto/create-skill.dto";
 import { UpdateSkillDto } from "./dto/update-skill.dto";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
 
 @ApiTags("Skills") // Swagger group name
 @Controller("skills")
 export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @Post()
   @ApiOperation({ summary: "Create a new skill" })
   @ApiResponse({ status: 201, description: "Skill successfully created" })
@@ -31,6 +37,9 @@ export class SkillsController {
     return this.skillsService.create(createSkillDto);
   }
 
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: "Get all skills" })
   @ApiResponse({ status: 200, description: "List of skills" })
@@ -38,6 +47,8 @@ export class SkillsController {
     return this.skillsService.findAll();
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @Get(":id")
   @ApiOperation({ summary: "Get a single skill" })
   @ApiParam({ name: "id", type: Number, description: "Skill ID number" })
@@ -47,6 +58,8 @@ export class SkillsController {
     return this.skillsService.findOne(+id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update skill information" })
   @ApiParam({ name: "id", type: Number, description: "Skill ID number" })
@@ -57,6 +70,8 @@ export class SkillsController {
     return this.skillsService.update(+id, updateSkillDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete a skill" })
   @ApiParam({ name: "id", type: Number, description: "Skill ID number" })

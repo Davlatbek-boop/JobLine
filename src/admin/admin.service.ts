@@ -11,7 +11,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateAdminPasswordDto } from './dto/update_password';
-// import { UpdateAdminPasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class AdminService {
@@ -114,38 +113,6 @@ export class AdminService {
     await this.adminRepo.update(id, { hashed_refresh_token });
     return { message: 'Refresh token updated successfully' };
   }
-
-  // async findAdminByActivationLink(link: string): Promise<User | null> {
-  //   return await this.userRepo.findOne({ where: { active_link: link } });
-  // }
-
-  // async activate(link: string) {
-  //   if (!link) {
-  //     throw new BadRequestException('Activation link jo‘natilmadi!');
-  //   }
-
-  //   const admin = await this.adminRepo.findOne({
-  //     where: { active_link: link },
-  //   });
-
-  //   if (!admin) {
-  //     throw new NotFoundException('Aktivatsiya linki notogri!');
-  //   }
-
-  //   if (admin.is_active) {
-  //     throw new BadRequestException('Allaqachon faollashtirilgan');
-  //   }
-
-  //   admin.is_active = 'true';
-  //   admin.active_link = ''; // linkni bekor qilish
-
-  //   await this.adminRepo.save(admin);
-
-  //   return {
-  //     message: 'Profil muvaffaqiyatli faollashtirildi',
-  //     is_active: admin.is_active,
-  //   };
-  // }
 
   async clearRefreshToken(adminId: number) {
     await this.adminRepo.update(adminId, {

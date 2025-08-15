@@ -7,17 +7,25 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { VacanciesService } from './vacancies.service';
 import { CreateVacancyDto } from './dto/create-vacancy.dto';
 import { UpdateVacancyDto } from './dto/update-vacancy.dto';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Vacancy } from './entities/vacancy.entity';
+import { AuthGuard } from '../common/guards/auth.guard';
+import { HrSelfGuard } from '../common/guards/hr-self.guard';
+import { AdminSelfGuard } from '../common/guards/admin-self.guard';
+import { SeekerGuard } from '../common/guards/seeker.guard';
 
 @Controller('vacancies')
 export class VacanciesController {
   constructor(private readonly vacanciesService: VacanciesService) {}
 
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, HrSelfGuard)
   @ApiOperation({ summary: 'CREATE Vacancy' })
   @ApiResponse({
     status: 200,
@@ -29,6 +37,9 @@ export class VacanciesController {
     return this.vacanciesService.create(createVacancyDto);
   }
 
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: 'GET ALL Vacancies' })
   @ApiResponse({
     status: 200,
@@ -42,6 +53,8 @@ export class VacanciesController {
     return this.vacanciesService.findAll(Number(page), Number(limit));
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: 'GET One Vacancy By Id' })
   @ApiResponse({
     status: 200,
@@ -53,6 +66,8 @@ export class VacanciesController {
     return this.vacanciesService.findOne(+id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminSelfGuard)
   @ApiOperation({ summary: 'UPDATE Vacancy' })
   @ApiResponse({
     status: 200,
@@ -64,6 +79,9 @@ export class VacanciesController {
     return this.vacanciesService.update(+id, updateVacancyDto);
   }
 
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminSelfGuard)
   @ApiOperation({ summary: 'DELETE Vacancy' })
   @ApiResponse({
     status: 200,
@@ -73,5 +91,20 @@ export class VacanciesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.vacanciesService.remove(+id);
+  }
+
+
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, HrSelfGuard)
+  @ApiOperation({ summary: 'get Vacancy by hr id' })
+  @ApiResponse({
+    status: 200,
+    description: 'get Vacancy by hr id',
+    type: Vacancy,
+  })
+  @Get('by-hr/:id')
+  getAllVacancyByHrId(@Param('id') id: string) {
+    return this.vacanciesService.getAllVacancyByHrId(+id);
   }
 }

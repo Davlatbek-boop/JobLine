@@ -1,21 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { SeekersService } from './seekers.service';
 import { CreateSeekerDto } from './dto/create-seeker.dto';
 import { UpdateSeekerDto } from './dto/update-seeker.dto';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { Seeker } from './entities/seeker.entity';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { SeekerSelfGuard } from '../common/guards/seeker-self.guard';
 
-@Controller("seekers")
+@Controller('seekers')
 export class SeekersController {
   constructor(private readonly seekersService: SeekersService) {}
 
-  @ApiOperation({ summary: "CREATE Seeker" })
+  @ApiOperation({ summary: 'CREATE Seeker' })
   @ApiResponse({
     status: 200,
-    description: "Activation",
+    description: 'Activation',
     type: Seeker,
   })
   @Post()
@@ -25,10 +39,10 @@ export class SeekersController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard, AdminGuard)
-  @ApiOperation({ summary: "GET ALL Seekers" })
+  @ApiOperation({ summary: 'GET ALL Seekers (Admin)' })
   @ApiResponse({
     status: 200,
-    description: "List of Seekers",
+    description: 'List of Seekers',
     type: [Seeker],
   })
   @Get()
@@ -36,46 +50,53 @@ export class SeekersController {
     return this.seekersService.findAll();
   }
 
-
   @ApiBearerAuth()
   @UseGuards(AuthGuard, SeekerSelfGuard)
-  @ApiOperation({ summary: "GET One Seeker By Id" })
-  @ApiParam({ name: "id", type: Number, example: 1 })
+  @ApiOperation({ summary: 'GET One Seeker By Id (Admin/Seeker)' })
+  @ApiParam({ name: 'id', type: Number, example: 1 })
   @ApiResponse({
     status: 200,
-    description: "Seeker",
+    description: 'Seeker',
     type: Seeker,
   })
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this.seekersService.findOne(+id);
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard, SeekerSelfGuard)
-  @ApiOperation({ summary: "UPDATE Seeker" })
-  @ApiParam({ name: "id", type: Number })
+  @ApiOperation({ summary: 'UPDATE Seeker (Admin/Seeker)' })
+  @ApiParam({ name: 'id', type: Number })
   @ApiResponse({
     status: 200,
-    description: "Update Seeker",
+    description: 'Update Seeker',
     type: Seeker,
   })
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateSeekerDto: UpdateSeekerDto) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSeekerDto: UpdateSeekerDto) {
     return this.seekersService.update(+id, updateSeekerDto);
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard, AdminGuard)
-  @ApiOperation({ summary: "DELETE Seeker" })
-  @ApiParam({ name: "id", type: Number })
+  @ApiOperation({ summary: 'DELETE Seeker (Admin)' })
+  @ApiParam({ name: 'id', type: Number })
   @ApiResponse({
     status: 200,
-    description: "Delete Seeker",
+    description: 'Delete Seeker',
     type: Seeker,
   })
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this.seekersService.remove(+id);
+  }
+
+  @Get('activate/:link')
+  @ApiOperation({ summary: 'Foydalanuvchini aktivlashtirish' })
+  @ApiParam({ name: 'link', type: String })
+  @ApiResponse({ status: 200, description: 'Foydalanuvchi aktivlashtirildi' })
+  activate(@Param('link') link: string) {
+    return this.seekersService.activateSeeker(link);
   }
 }

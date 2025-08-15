@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { CategoryService } from "./category.service";
 import { CreateCategoryDto } from "./dto/create-category.dto";
@@ -17,13 +18,15 @@ import {
   ApiResponse,
 } from "@nestjs/swagger";
 import { Category } from "./entities/category.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
 
-@ApiBearerAuth()
 @Controller("category")
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "CREATE Category" })
   @ApiResponse({
     status: 200,
@@ -36,6 +39,7 @@ export class CategoryController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "GET ALL Category" })
   @ApiResponse({
     status: 200,
@@ -47,7 +51,9 @@ export class CategoryController {
     return this.categoryService.findAll();
   }
 
+  
   @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "GET One Category By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -61,6 +67,7 @@ export class CategoryController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "UPDATE Category" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
@@ -77,6 +84,7 @@ export class CategoryController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "DELETE Category" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({

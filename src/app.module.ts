@@ -11,7 +11,6 @@ import { SocialLinksModule } from './social-links/social-links.module';
 import { CompaniesModule } from './companies/companies.module';
 import { AuthModule } from './auth/auth.module';
 import { HrModule } from './hr/hr.module';
-import { Admin } from 'typeorm';
 import { AdminModule } from './admin/admin.module';
 import { JwtModule } from '@nestjs/jwt';
 import { VacanciesModule } from './vacancies/vacancies.module';

@@ -6,17 +6,22 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { SpecializationService } from "./specialization.service";
 import { CreateSpecializationDto } from "./dto/create-specialization.dto";
 import { UpdateSpecializationDto } from "./dto/update-specialization.dto";
-import { ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
 import { Specialization } from "./entities/specialization.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
 
 @Controller("specialization")
 export class SpecializationController {
   constructor(private readonly specializationService: SpecializationService) {}
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "CREATE Specialization" })
   @ApiResponse({
     status: 200,
@@ -28,6 +33,8 @@ export class SpecializationController {
     return this.specializationService.create(createSpecializationDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "GET ALL Specializations" })
   @ApiResponse({
     status: 200,
@@ -39,6 +46,9 @@ export class SpecializationController {
     return this.specializationService.findAll();
   }
 
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "GET One Specialization By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -51,6 +61,9 @@ export class SpecializationController {
     return this.specializationService.findOne(+id);
   }
 
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "UPDATE Specialization" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
@@ -66,6 +79,8 @@ export class SpecializationController {
     return this.specializationService.update(+id, updateSpecializationDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "DELETE Specialization" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({

@@ -26,6 +26,7 @@ export class SeekerAuthService {
       id: seeker.id,
       email: seeker.email,
       is_active: seeker.is_active,
+      role: "seeker"
     };
 
     const [accessToken, refreshToken] = await Promise.all([
