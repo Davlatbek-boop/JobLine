@@ -103,7 +103,6 @@ export class AdminController {
   @Patch(":id/password")
   @ApiOperation({ summary: "Foydalanuvchi parolini yangilash      AdminSelf" })
   @ApiParam({ name: "id", type: Number })
-  // @ApiBody({ type: UpdateAdminPasswordDto })
   @ApiResponse({ status: 200, description: "Parol muvaffaqiyatli yangilandi" })
   async updatePassword(
     @Param("id") id: number,
@@ -112,12 +111,4 @@ export class AdminController {
     const result = await this.adminService.updatePassword(id, dto);
     return { message: result };
   }
-
-  // @Get('activate/:link')
-  // @ApiOperation({ summary: 'Foydalanuvchini aktivlashtirish' })
-  // @ApiParam({ name: 'link', type: String })
-  // @ApiResponse({ status: 200, description: 'Foydalanuvchi aktivlashtirildi' })
-  // activate(@Param('link') link: string) {
-  //   return this.adminService.activate(link);
-  // }
 }
