@@ -18,7 +18,7 @@ export class VacanciesService {
 
   async findAll(page: number, limit: number) {
     const [vacansies, total] = await this.vacancyRepo.findAndCount({
-      relations: ["applications"], //'hr', 'company', 'specialization'
+      relations: ["applications","hr"], //'hr', 'company', 'specialization'
       skip: (page - 1) * limit,
       take: limit,
       order: { id: "ASC" },

@@ -19,7 +19,7 @@ export class CompaniesService {
   }
 
   async findAll(): Promise<Company[]> {
-    return await this.companyRepo.find();
+    return await this.companyRepo.find({ relations: ["vacansy"] });
   }
 
   async findOne(id: number): Promise<Company> {
