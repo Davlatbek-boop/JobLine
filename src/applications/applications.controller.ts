@@ -15,7 +15,7 @@ import { ApplicationsService } from "./applications.service";
 import { CreateApplicationDto } from "./dto/create-application.dto";
 import { UpdateApplicationDto } from "./dto/update-application.dto";
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
-import { Application } from "./entities/application.entity";
+import { Application, ApplicationStatusType } from "./entities/application.entity";
 
 @Controller("applications")
 export class ApplicationsController {
@@ -98,7 +98,7 @@ export class ApplicationsController {
   @Get("by-vacancy/:vacancyId")
   getByVacancy(
     @Param("vacancyId", ParseIntPipe) vacancyId: number,
-    @Query("status") status?: string,
+    @Query("status") status?: ApplicationStatusType,
     @Query("page", new DefaultValuePipe(1)) page: number = 1,
     @Query("limit", new DefaultValuePipe(10)) limit: number = 10
   ) {
@@ -122,7 +122,7 @@ export class ApplicationsController {
   })
   @Get("filter/by-status")
   filterByStatus(
-    @Query("status") status: string,
+    @Query("status") status: ApplicationStatusType,
     @Query("page", new DefaultValuePipe(1)) page: number = 1,
     @Query("limit", new DefaultValuePipe(10)) limit: number = 10
   ) {

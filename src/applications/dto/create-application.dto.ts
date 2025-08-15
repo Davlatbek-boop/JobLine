@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Vacancy } from "../../vacancies/entities/vacancy.entity";
-import { IsDateString, IsInt, IsOptional, IsString } from "class-validator";
+import { IsDateString, IsEnum, IsInt, IsOptional, IsString } from "class-validator";
+import { ApplicationStatusType } from "../entities/application.entity";
 
 export class CreateApplicationDto {
   @ApiProperty({ description: "Cover letter", example: "Cover letter" })
@@ -20,10 +21,11 @@ export class CreateApplicationDto {
 
   @ApiProperty({
     description: "Application condition",
-    example: "technical_test",
+    example: ApplicationStatusType.TECHNICAL_TEST,
+    enum: ApplicationStatusType,
   })
-  @IsString()
-  status: string;
+  @IsEnum(ApplicationStatusType)
+  status: ApplicationStatusType;
 
   @ApiProperty({ description: "Reason to reject", example: "Rude behaviour" })
   @IsOptional()

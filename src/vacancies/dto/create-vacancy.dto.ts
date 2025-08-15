@@ -1,6 +1,25 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDateString, IsEmail, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Matches } from 'class-validator';
-import { EmploymentType, PriorityType, RequiredEducationType, RequiredExperienceType, StatusType, WorkFormatType, WorkScheduleType } from '../entities/vacancy.entity';
+import { ApiProperty } from "@nestjs/swagger";
+import {
+  IsBoolean,
+  IsDateString,
+  IsEmail,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Matches,
+} from "class-validator";
+import {
+  EmploymentType,
+  PriorityType,
+  RequiredEducationType,
+  RequiredExperienceType,
+  StatusType,
+  WorkFormatType,
+  WorkScheduleType,
+} from "../entities/vacancy.entity";
 
 export class CreateVacancyDto {
   @ApiProperty({ description: "Vacancy Title", example: "Developer" })
@@ -98,8 +117,8 @@ export class CreateVacancyDto {
   @ApiProperty({
     description: "Working format",
     example: EmploymentType.INTERNSHIP,
-    enum:EmploymentType,
-    required:false
+    enum: EmploymentType,
+    required: false,
   })
   @IsOptional()
   @IsString()

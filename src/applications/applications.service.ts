@@ -2,8 +2,11 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateApplicationDto } from "./dto/create-application.dto";
 import { UpdateApplicationDto } from "./dto/update-application.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Between, Repository } from "typeorm";
-import { Application } from "./entities/application.entity";
+import { Repository } from "typeorm";
+import {
+  Application,
+  ApplicationStatusType,
+} from "./entities/application.entity";
 
 @Injectable()
 export class ApplicationsService {
@@ -32,7 +35,10 @@ export class ApplicationsService {
   }
 
   findOne(id: number) {
-    return this.applicationRepo.findOne({ where: { id },  relations: ['vacancy'], });
+    return this.applicationRepo.findOne({
+      where: { id },
+      relations: ["vacancy"],
+    });
   }
 
   async update(id: number, updateApplicationDto: UpdateApplicationDto) {
@@ -56,7 +62,7 @@ export class ApplicationsService {
   // All applications for a vacancy (optional status + pagination)
   async getApplicationsByVacancy(
     vacancyId: number,
-    status?: string,
+    status?: ApplicationStatusType,
     page = 1,
     limit = 10
   ) {
@@ -75,7 +81,11 @@ export class ApplicationsService {
   }
 
   // Filter applications by status with pagination
-  async filterApplications(status: string, page = 1, limit = 10) {
+  async filterApplications(
+    status: ApplicationStatusType,
+    page = 1,
+    limit = 10
+  ) {
     const [items, total] = await this.applicationRepo.findAndCount({
       where: { status },
       relations: ["vacancy"],
