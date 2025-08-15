@@ -6,9 +6,9 @@ import {
   Patch,
   Param,
   Delete,
-  NotFoundException,
   UseGuards,
 } from "@nestjs/common";
+
 import {
   ApiTags,
   ApiOperation,
@@ -55,20 +55,6 @@ export class AdminController {
     return this.adminService.findAll();
   }
 
-  // @Get('activate/:link')
-  // async activateAdmin(@Param('link') link: string) {
-  //   const admin = await this.adminService.findAdminByActivationLink(link);
-
-  //   if (!admin) {
-  //     throw new NotFoundException('Aktivatsiya linki notogri!');
-  //   }
-
-  //   admin.is_active = 'true';
-  //   admin.active_link = '';
-  //   await this.adminService.update(admin.id, admin);
-
-  //   return { message: 'Profil muvaffaqiyatli faollashtirildi!' };
-  // }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard, AdminSelfGuard)
