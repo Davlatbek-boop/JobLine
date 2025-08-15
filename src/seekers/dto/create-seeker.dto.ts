@@ -188,22 +188,4 @@ export class CreateSeekerDto {
   @IsOptional()
   @IsEnum(Status)
   status?: Status;
-
-  @ApiProperty({
-    example: null,
-    description: 'Refresh token used for authentication',
-    required: false,
-  })
-  @IsOptional()
-  @IsString()
-  refresh_token?: string;
-
-  @ApiProperty({
-    example: true,
-    description: 'Indicates if the seeker’s account is active',
-    required: false,
-  })
-  @IsOptional()
-  @IsBoolean()
-  is_active?: boolean;
 }

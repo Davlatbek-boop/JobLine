@@ -107,7 +107,7 @@ export class CreateHrDto {
   companyId: number;
 
   @ApiProperty({
-    example: false,
+    example: "hr",
     description: 'Indicates if the HR staff member has admin privileges',
   })
   @IsString()

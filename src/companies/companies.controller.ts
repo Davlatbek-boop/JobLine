@@ -7,6 +7,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { Company } from './entities/company.entity';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { AdminGuard } from '../common/guards/admin.guard';
+import { HrGuard } from '../common/guards/hr.guard';
 
 @ApiTags('Companies')
 @Controller('companies')
@@ -14,7 +15,7 @@ export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, HrGuard)
   @Post()
   @ApiOperation({ summary: 'Create a new company' })
   @ApiResponse({ status: 201, type: Company })
@@ -60,7 +61,7 @@ export class CompaniesController {
 
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @Get(':id/hr')
   @ApiOperation({ summary: 'Get hr by company ID' })
   @ApiResponse({ status: 200, description: 'get successfully' })

@@ -147,8 +147,8 @@ export class Seeker {
   @Column({ type: 'varchar', nullable: true })
   hashed_refresh_token: string;
 
-  @ApiProperty({ description: "Is Job seeker at work or not ?", example: true })
-  @Column({ type: "boolean", default: true })
+  @ApiProperty({ description: "Is Job seeker at work or not ?", example: false })
+  @Column({ type: "boolean", default: false })
   is_active: boolean;
 
   @ApiProperty({ description: "Resume file", example: "Resume file" })

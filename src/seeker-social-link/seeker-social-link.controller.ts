@@ -20,6 +20,7 @@ import {
 import { SeekerSocialLink } from "./entities/seeker-social-link.entity";
 import { AuthGuard } from "../common/guards/auth.guard";
 import { AdminGuard } from "../common/guards/admin.guard";
+import { SeekerGuard } from "../common/guards/seeker.guard";
 
 @Controller("seeker-social-link")
 export class SeekerSocialLinkController {
@@ -28,7 +29,7 @@ export class SeekerSocialLinkController {
   ) {}
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "CREATE SeekerSocialLink" })
   @ApiResponse({
     status: 200,
@@ -41,7 +42,7 @@ export class SeekerSocialLinkController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "GET ALL SeekerSocialLinks" })
   @ApiResponse({
     status: 200,
@@ -54,7 +55,7 @@ export class SeekerSocialLinkController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "GET One SeekerSocialLink By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -68,7 +69,7 @@ export class SeekerSocialLinkController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "UPDATE SeekerSocialLink" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
@@ -86,7 +87,7 @@ export class SeekerSocialLinkController {
 
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "DELETE SeekerSocialLink" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({

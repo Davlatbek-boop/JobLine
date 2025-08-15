@@ -22,13 +22,14 @@ import { SeekerSkill } from "./entities/seeker-skill.entity";
 import { AuthGuard } from "../common/guards/auth.guard";
 import { SeekerSelfGuard } from "../common/guards/seeker-self.guard";
 import { AdminGuard } from "../common/guards/admin.guard";
+import { SeekerGuard } from "../common/guards/seeker.guard";
 
 @Controller("seeker-skills")
 export class SeekerSkillsController {
   constructor(private readonly seekerSkillsService: SeekerSkillsService) {}
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "CREATE SeekerSkill" })
   @ApiResponse({
     status: 200,
@@ -46,7 +47,7 @@ export class SeekerSkillsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "GET ALL SeekerSkills" })
   @ApiResponse({
     status: 200,
@@ -61,7 +62,7 @@ export class SeekerSkillsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "GET One SeekerSkill By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -75,7 +76,7 @@ export class SeekerSkillsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "UPDATE SeekerSkill" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({

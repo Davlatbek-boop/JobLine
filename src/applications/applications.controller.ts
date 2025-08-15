@@ -24,15 +24,17 @@ import {
 } from "@nestjs/swagger";
 import { Application } from "./entities/application.entity";
 import { AuthGuard } from "../common/guards/auth.guard";
+import { SeekerGuard } from "../common/guards/seeker.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
+import { HrGuard } from "../common/guards/hr.guard";
 
 @ApiBearerAuth()
 @Controller("applications")
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "CREATE Application" })
   @ApiResponse({
     status: 200,
@@ -45,7 +47,7 @@ export class ApplicationsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "GET ALL Applications" })
   @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
   @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
@@ -60,7 +62,7 @@ export class ApplicationsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "GET One Application By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -74,6 +76,7 @@ export class ApplicationsController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "UPDATE Application" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
@@ -103,6 +106,7 @@ export class ApplicationsController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard, HrGuard)
   // All applications for a vacancy (optional status + pagination)
   @ApiOperation({ summary: "Get all applications for a given vacancy" })
   @ApiParam({ name: "vacancyId", type: Number })
@@ -130,6 +134,7 @@ export class ApplicationsController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard, HrGuard)
   // Filter applications by status with pagination
   @ApiOperation({ summary: "Filter applications by status" })
   @ApiQuery({ name: "status", required: true, example: "reviewed" })
@@ -154,6 +159,7 @@ export class ApplicationsController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "Get application by seeker id" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({

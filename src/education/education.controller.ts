@@ -6,17 +6,24 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { EducationService } from "./education.service";
 import { CreateEducationDto } from "./dto/create-education.dto";
 import { UpdateEducationDto } from "./dto/update-education.dto";
-import { ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
 import { Education } from "./entities/education.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { SeekerGuard } from "../common/guards/seeker.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
 
 @Controller("education")
 export class EducationController {
   constructor(private readonly educationService: EducationService) {}
 
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, SeekerGuard)
   @ApiOperation({ summary: "CREATE Education" })
   @ApiResponse({
     status: 201,
@@ -28,12 +35,18 @@ export class EducationController {
     return this.educationService.create(createEducationDto);
   }
 
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "GET ALL Educations" })
   @Get()
   findAll() {
     return this.educationService.findAll();
   }
 
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "GET One Education By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -46,6 +59,8 @@ export class EducationController {
     return this.educationService.findOne(+id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "UPDATE Education" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
@@ -61,6 +76,8 @@ export class EducationController {
     return this.educationService.update(+id, updateEducationDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "DELETE Education" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({

@@ -38,7 +38,7 @@ export class VacancySkillsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, SeekerGuard)
+  @UseGuards(AuthGuard, HrGuard)
   @ApiOperation({ summary: 'GET ALL Vacancy Skills' })
   @ApiResponse({
     status: 200,
@@ -54,7 +54,7 @@ export class VacancySkillsController {
 
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, SeekerGuard)
+  @UseGuards(AuthGuard, HrGuard)
   @ApiOperation({ summary: 'GET One Vacancy Skill By Id' })
   @ApiResponse({
     status: 200,
@@ -85,7 +85,7 @@ export class VacancySkillsController {
 
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, HrGuard)
   @ApiOperation({ summary: 'DELETE Vacancy Skill' })
   @ApiResponse({
     status: 200,
