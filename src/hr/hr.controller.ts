@@ -101,16 +101,16 @@ export class HrController {
     return this.hrService.activate(link);
   }
 
-    @ApiBearerAuth()
-    @Patch(":id/password")
-    @ApiOperation({ summary: "Foydalanuvchi parolini yangilash      AdminSelf" })
-    @ApiParam({ name: "id", type: Number })
-    @ApiResponse({ status: 200, description: "Parol muvaffaqiyatli yangilandi" })
-    async updatePassword(
-      @Param("id") id: number,
-      @Body() dto: UpdateHrPasswordDto
-    ): Promise<{ message: string }> {
-      const result = await this.hrService.updatePassword(id, dto);
-      return { message: result };
-    }
+  @ApiBearerAuth()
+  @Patch(':id/password')
+  @ApiOperation({ summary: 'Foydalanuvchi parolini yangilash      AdminSelf' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({ status: 200, description: 'Parol muvaffaqiyatli yangilandi' })
+  async updatePassword(
+    @Param('id') id: number,
+    @Body() dto: UpdateHrPasswordDto,
+  ): Promise<{ message: string }> {
+    const result = await this.hrService.updatePassword(id, dto);
+    return { message: result };
+  }
 }

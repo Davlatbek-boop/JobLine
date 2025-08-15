@@ -4,27 +4,28 @@ import {
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
-} from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Seeker } from "./entities/seeker.entity";
-import { CreateSeekerDto } from "./dto/create-seeker.dto";
-import { UpdateSeekerDto } from "./dto/update-seeker.dto";
-import * as bcrypt from "bcrypt";
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Seeker } from './entities/seeker.entity';
+import { CreateSeekerDto } from './dto/create-seeker.dto';
+import { UpdateSeekerDto } from './dto/update-seeker.dto';
+import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { MailService } from "../mail/mail.service";
+import { MailService } from '../mail/mail.service';
+import { UpdateSeekerPasswordDto } from './dto/update-password';
 
 @Injectable()
 export class SeekersService {
   constructor(
     @InjectRepository(Seeker)
     private readonly seekerRepository: Repository<Seeker>,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
   ) {}
 
   async updateRefreshToken(id: number, hashed_refresh_token: string) {
     await this.seekerRepository.update(id, { hashed_refresh_token });
-    return { message: "Refresh token updated successfully" };
+    return { message: 'Refresh token updated successfully' };
   }
 
   async findSeekerByEmail(email: string) {
@@ -38,7 +39,7 @@ export class SeekersService {
     for (const admin of admins) {
       const match = await bcrypt.compare(
         refresh_token,
-        admin.hashed_refresh_token || ""
+        admin.hashed_refresh_token || '',
       );
       if (match) return admin;
     }
@@ -47,38 +48,39 @@ export class SeekersService {
   }
 
   async create(createSeekerDto: CreateSeekerDto) {
-  const { password_hash, email, ...otherDto } = createSeekerDto;
+    const { password_hash, email, ...otherDto } = createSeekerDto;
 
-  // Email tekshirish
-  const existingSeeker = await this.seekerRepository.findOne({ where: { email } });
-  if (existingSeeker) {
-    throw new BadRequestException('Bunday email allaqachon mavjud!');
+    // Email tekshirish
+    const existingSeeker = await this.seekerRepository.findOne({
+      where: { email },
+    });
+    if (existingSeeker) {
+      throw new BadRequestException('Bunday email allaqachon mavjud!');
+    }
+
+    // Parolni hash qilish
+    const hashedPassword = await bcrypt.hash(password_hash, 10);
+
+    // Aktivatsiya linki
+    const activationLink = uuidv4();
+
+    const newSeeker = await this.seekerRepository.save({
+      ...otherDto,
+      email,
+      password_hash: hashedPassword, // <-- BU joy muhim!
+      activate_link: activationLink, // agar DB’da `activate_link` bo‘lsa
+    });
+
+    try {
+      await this.mailService.sendSeekerMail(newSeeker);
+    } catch (error) {
+      console.error('Email yuborishda xatolik:', error.message);
+      throw new ServiceUnavailableException('Emailga xat yuborishda xatolik');
+    }
+
+    return newSeeker;
   }
 
-  // Parolni hash qilish
-  const hashedPassword = await bcrypt.hash(password_hash, 10);
-
-  // Aktivatsiya linki
-  const activationLink = uuidv4();
-
-  const newSeeker = await this.seekerRepository.save({
-    ...otherDto,
-    email,
-    password_hash: hashedPassword, // <-- BU joy muhim!
-    activate_link: activationLink, // agar DB’da `activate_link` bo‘lsa
-  });
-
-  try {
-    await this.mailService.sendSeekerMail(newSeeker);
-  } catch (error) {
-    console.error('Email yuborishda xatolik:', error.message);
-    throw new ServiceUnavailableException('Emailga xat yuborishda xatolik');
-  }
-
-  return newSeeker;
-}
-
-  
   async findAll(): Promise<Seeker[]> {
     return this.seekerRepository.find();
   }
@@ -103,30 +105,57 @@ export class SeekersService {
   }
 
   async findAdminByActivationLink(link: string): Promise<Seeker | null> {
-      return await this.seekerRepository.findOne({ where: {  activate_link: link } });
+    return await this.seekerRepository.findOne({
+      where: { activate_link: link },
+    });
+  }
+
+  async activateSeeker(link: string) {
+    if (!link) {
+      throw new BadRequestException('Activation link jo‘natilmadi!');
     }
-  
-    async activateSeeker(link: string) {
-      if (!link) {
-        throw new BadRequestException('Activation link jo‘natilmadi!');
-      }
-      const seeker = await this.seekerRepository.findOne({
-        where: {  activate_link: link },
-      });
-  
-      if (!seeker) {
-        throw new NotFoundException('Aktivatsiya linki notogri!');
-      }
-      if (seeker.is_active) {
-        throw new BadRequestException('Allaqachon faollashtirilgan');
-      }
-      seeker.is_active = true;
-      seeker. activate_link = '';
-  
-      await this.seekerRepository.save(seeker);
-      return {
-        message: 'Profil muvaffaqiyatli faollashtirildi',
-        is_active: seeker.is_active,
-      };
+    const seeker = await this.seekerRepository.findOne({
+      where: { activate_link: link },
+    });
+
+    if (!seeker) {
+      throw new NotFoundException('Aktivatsiya linki notogri!');
     }
+    if (seeker.is_active) {
+      throw new BadRequestException('Allaqachon faollashtirilgan');
+    }
+    seeker.is_active = true;
+    seeker.activate_link = '';
+
+    await this.seekerRepository.save(seeker);
+    return {
+      message: 'Profil muvaffaqiyatli faollashtirildi',
+      is_active: seeker.is_active,
+    };
+  }
+
+  async updatePassword(
+    id: number,
+    dto: UpdateSeekerPasswordDto,
+  ): Promise<string> {
+    const seeker = await this.seekerRepository.findOne({ where: { id } });
+
+    if (!seeker) throw new NotFoundException('Foydalanuvchi topilmadi');
+
+    const isMatch = await bcrypt.compare(dto.oldpassword, seeker.password_hash);
+    if (!isMatch) throw new BadRequestException("Eski parol noto'g'ri");
+
+    if (dto.newpassword !== dto.confirm_password) {
+      throw new BadRequestException(
+        'Yangi parol va tasdiqlash paroli mos emas',
+      );
+    }
+
+    const hashedNewPassword = await bcrypt.hash(dto.newpassword, 7);
+    seeker.password_hash = hashedNewPassword;
+
+    await this.seekerRepository.save(seeker);
+
+    return 'Parol muvaffaqiyatli yangilandi';
+  }
 }
