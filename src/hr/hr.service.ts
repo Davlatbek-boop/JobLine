@@ -129,11 +129,11 @@ export class HrService {
   }
 
   async updatePassword(id: number, dto: UpdateHrPasswordDto): Promise<string> {
-    const seeker = await this.hrRepo.findOne({ where: { id } });
+    const hr = await this.hrRepo.findOne({ where: { id } });
 
-    if (!seeker) throw new NotFoundException('Foydalanuvchi topilmadi');
+    if (!hr) throw new NotFoundException('Foydalanuvchi topilmadi');
 
-    const isMatch = await bcrypt.compare(dto.oldpassword, seeker.password_hash);
+    const isMatch = await bcrypt.compare(dto.oldpassword, hr.password_hash);
     if (!isMatch) throw new BadRequestException("Eski parol noto'g'ri");
 
     if (dto.newpassword !== dto.confirm_password) {
@@ -143,9 +143,9 @@ export class HrService {
     }
 
     const hashedNewPassword = await bcrypt.hash(dto.newpassword, 7);
-    seeker.password_hash = hashedNewPassword;
+    hr.password_hash = hashedNewPassword;
 
-    await this.hrRepo.save(seeker);
+    await this.hrRepo.save(hr);
 
     return 'Parol muvaffaqiyatli yangilandi';
   }

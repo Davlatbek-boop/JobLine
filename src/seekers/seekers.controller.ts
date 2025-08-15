@@ -21,6 +21,7 @@ import { Seeker } from './entities/seeker.entity';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { SeekerSelfGuard } from '../common/guards/seeker-self.guard';
+import { UpdateAdminPasswordDto } from '../admin/dto/update_password';
 
 @Controller('seekers')
 export class SeekersController {
@@ -98,5 +99,18 @@ export class SeekersController {
   @ApiResponse({ status: 200, description: 'Foydalanuvchi aktivlashtirildi' })
   activate(@Param('link') link: string) {
     return this.seekersService.activateSeeker(link);
+  }
+
+  @ApiBearerAuth()
+  @Patch(':id/password')
+  @ApiOperation({ summary: 'Foydalanuvchi parolini yangilash      AdminSelf' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({ status: 200, description: 'Parol muvaffaqiyatli yangilandi' })
+  async updatePassword(
+    @Param('id') id: number,
+    @Body() dto: UpdateAdminPasswordDto,
+  ): Promise<{ message: string }> {
+    const result = await this.seekersService.updatePassword(id, dto);
+    return { message: result };
   }
 }
