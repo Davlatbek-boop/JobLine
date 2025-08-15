@@ -275,6 +275,15 @@ export class Vacancy {
   @Column({ default: 0 })
   applications_count?: number;
 
+  @Column({nullable: true})
+  hrId: number
+
+  @Column({nullable: true})
+  companyId: number
+
+  @Column({nullable: true})
+  specializationId: number
+
   @ApiProperty({
     description: "Vacancy Published date",
     example: "2025-05-29T10:30:00Z",

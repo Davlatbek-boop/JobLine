@@ -56,4 +56,12 @@ export class VacanciesService {
     await this.vacancyRepo.save(vacancy);
     return { message: `Vacancy with ${id} id closed successfully` };
   }
+
+  async getAllVacancyByHrId(id: number) {
+    const vacancy = await this.vacancyRepo.find({
+      where: { hrId: id },
+    });
+
+    return vacancy;
+  }
 }

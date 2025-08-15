@@ -6,18 +6,29 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 
 import { SeekerSkillsService } from "./seeker-skills.service";
 import { CreateSeekerSkillDto } from "./dto/create-seeker-skill.dto";
 import { UpdateSeekerSkillDto } from "./dto/update-seeker-skill.dto";
-import { ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from "@nestjs/swagger";
 import { SeekerSkill } from "./entities/seeker-skill.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { SeekerSelfGuard } from "../common/guards/seeker-self.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
 
 @Controller("seeker-skills")
 export class SeekerSkillsController {
   constructor(private readonly seekerSkillsService: SeekerSkillsService) {}
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "CREATE SeekerSkill" })
   @ApiResponse({
     status: 200,
@@ -34,6 +45,8 @@ export class SeekerSkillsController {
     return this.seekerSkillsService.create(createSeekerSkillDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "GET ALL SeekerSkills" })
   @ApiResponse({
     status: 200,
@@ -47,7 +60,8 @@ export class SeekerSkillsController {
     return this.seekerSkillsService.findAll();
   }
 
-
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "GET One SeekerSkill By Id" })
   @ApiParam({ name: "id", type: Number, example: 1 })
   @ApiResponse({
@@ -60,7 +74,8 @@ export class SeekerSkillsController {
     return this.seekerSkillsService.findOne(+id);
   }
 
-
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "UPDATE SeekerSkill" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
@@ -76,7 +91,8 @@ export class SeekerSkillsController {
     return this.seekerSkillsService.update(+id, updateSeekerSkillDto);
   }
 
-
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "DELETE SeekerSkill" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({
