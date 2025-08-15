@@ -19,6 +19,7 @@ import { ApplicationsModule } from './applications/applications.module';
 import { CategoryModule } from './category/category.module';
 import { SkillsModule } from './skills/skills.module';
 import { SpecializationModule } from './specialization/specialization.module';
+import { QueryModule } from './query/query.module';
 
 @Module({
   imports: [
@@ -53,6 +54,9 @@ import { SpecializationModule } from './specialization/specialization.module';
     AdminModule,
     SkillsModule,
     SpecializationModule,
+    QueryModule,
   ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
