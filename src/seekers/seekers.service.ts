@@ -121,11 +121,12 @@ export class SeekersService {
     if (!seeker) {
       throw new NotFoundException('Aktivatsiya linki notogri!');
     }
+
     if (seeker.is_active) {
       throw new BadRequestException('Allaqachon faollashtirilgan');
     }
+    
     seeker.is_active = true;
-    seeker.activate_link = '';
 
     await this.seekerRepository.save(seeker);
     return {

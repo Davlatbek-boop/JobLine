@@ -8,28 +8,34 @@ import {
   Delete,
   Query,
   UseGuards,
-} from '@nestjs/common';
-import { VacanciesService } from './vacancies.service';
-import { CreateVacancyDto } from './dto/create-vacancy.dto';
-import { UpdateVacancyDto } from './dto/update-vacancy.dto';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { Vacancy } from './entities/vacancy.entity';
-import { AuthGuard } from '../common/guards/auth.guard';
-import { HrSelfGuard } from '../common/guards/hr-self.guard';
-import { AdminSelfGuard } from '../common/guards/admin-self.guard';
-import { SeekerGuard } from '../common/guards/seeker.guard';
+  ParseIntPipe,
+  DefaultValuePipe,
+} from "@nestjs/common";
+import { VacanciesService } from "./vacancies.service";
+import { CreateVacancyDto } from "./dto/create-vacancy.dto";
+import { UpdateVacancyDto } from "./dto/update-vacancy.dto";
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+} from "@nestjs/swagger";
+import { Vacancy } from "./entities/vacancy.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { HrSelfGuard } from "../common/guards/hr-self.guard";
+import { AdminSelfGuard } from "../common/guards/admin-self.guard";
+import { SeekerGuard } from "../common/guards/seeker.guard";
 
-@Controller('vacancies')
+@Controller("vacancies")
 export class VacanciesController {
   constructor(private readonly vacanciesService: VacanciesService) {}
 
-
   @ApiBearerAuth()
   @UseGuards(AuthGuard, HrSelfGuard)
-  @ApiOperation({ summary: 'CREATE Vacancy' })
+  @ApiOperation({ summary: "CREATE Vacancy" })
   @ApiResponse({
     status: 200,
-    description: 'Activation',
+    description: "Activation",
     type: Vacancy,
   })
   @Post()
@@ -37,74 +43,72 @@ export class VacanciesController {
     return this.vacanciesService.create(createVacancyDto);
   }
 
-
   @ApiBearerAuth()
   @UseGuards(AuthGuard, SeekerGuard)
-  @ApiOperation({ summary: 'GET ALL Vacancies' })
+  @ApiOperation({ summary: "GET ALL Vacancies" })
   @ApiResponse({
     status: 200,
-    description: 'List of Vacancies',
+    description: "List of Vacancies",
     type: [Vacancy],
   })
   @Get()
-  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
-  findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+  @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
+  @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
+  findAll(@Query("page") page = 1, @Query("limit") limit = 10) {
     return this.vacanciesService.findAll(Number(page), Number(limit));
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard, SeekerGuard)
-  @ApiOperation({ summary: 'GET One Vacancy By Id' })
+  @ApiOperation({ summary: "GET One Vacancy By Id" })
   @ApiResponse({
     status: 200,
-    description: 'Vacancy',
+    description: "Vacancy",
     type: Vacancy,
   })
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.vacanciesService.findOne(+id);
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard, AdminSelfGuard)
-  @ApiOperation({ summary: 'UPDATE Vacancy' })
+  @ApiOperation({ summary: "UPDATE Vacancy" })
   @ApiResponse({
     status: 200,
-    description: 'Update Vacancy',
+    description: "Update Vacancy",
     type: Vacancy,
   })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVacancyDto: UpdateVacancyDto) {
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateVacancyDto: UpdateVacancyDto) {
     return this.vacanciesService.update(+id, updateVacancyDto);
   }
 
-
   @ApiBearerAuth()
   @UseGuards(AuthGuard, AdminSelfGuard)
-  @ApiOperation({ summary: 'DELETE Vacancy' })
+  @ApiOperation({ summary: "DELETE Vacancy" })
   @ApiResponse({
     status: 200,
-    description: 'Delete Vacancy',
+    description: "Delete Vacancy",
     type: Vacancy,
   })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.vacanciesService.remove(+id);
   }
 
-
-
   @ApiBearerAuth()
   @UseGuards(AuthGuard, HrSelfGuard)
-  @ApiOperation({ summary: 'get Vacancy by hr id' })
+  @ApiOperation({ summary: "get Vacancy by hr id" })
   @ApiResponse({
     status: 200,
-    description: 'get Vacancy by hr id',
+    description: "get Vacancy by hr id",
     type: Vacancy,
   })
-  @Get('by-hr/:id')
-  getAllVacancyByHrId(@Param('id') id: string) {
+  @Get("by-hr/:id")
+  getAllVacancyByHrId(@Param("id") id: string) {
     return this.vacanciesService.getAllVacancyByHrId(+id);
   }
+
+  
 }

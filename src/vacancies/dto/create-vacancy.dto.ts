@@ -164,7 +164,7 @@ export class CreateVacancyDto {
 
   @ApiProperty({
     description: "Vacancy condition",
-    example: "draft",
+    example: StatusType.ACTIVE,
     enum: StatusType,
     required: false,
   })
