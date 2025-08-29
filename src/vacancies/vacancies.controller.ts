@@ -44,7 +44,7 @@ export class VacanciesController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, SeekerGuard)
+  @UseGuards(AuthGuard)  // AuthGuard olib tashladim Abdulloh
   @ApiOperation({ summary: "GET ALL Vacancies" })
   @ApiResponse({
     status: 200,
